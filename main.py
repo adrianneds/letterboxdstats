@@ -45,13 +45,13 @@ def main(username):
 def init_dframe():
     # create a data frame
     diary = {
+        "id": [],
         "film_name": [],
         "film_rating": [],
         "release_date": [],
         "liked":[],
         "reviewed":[],
         "date":[],
-        "rewatch":[]
     }
     return(pd.DataFrame(diary))
 
@@ -101,12 +101,16 @@ def getRewatch(entry):
         rewatch = False
     return rewatch
 
+def getId(entry):
+    id = entry.find('div', class_='film-poster')['data-film-id']
+    return id
+
 def diarStats(diary_df, url):
     soup = init_soup(url)
     entries = soup.find_all('tr', class_="diary-entry-row") 
-    newRows = [pd.DataFrame([ {'film_name': getFilmDetails(li)[0], 'film_rating': getRating(li),
+    newRows = [pd.DataFrame([ {'id':getId(li), 'film_name': getFilmDetails(li)[0], 'film_rating': getRating(li),
                             "release_date": getFilmDetails(li)[1], "liked":getLikeReview(li)[0],
-                            "reviewed":getLikeReview(li)[1], "date": getDate(li), "rewatch": getRewatch(li)} ]) for li in entries]
+                            "reviewed":getLikeReview(li)[1], "date": getDate(li)} ]) for li in entries]
     diary_page = pd.concat( newRows , ignore_index=True)
     diary_df = pd.concat([diary_df, diary_page], ignore_index=True)
     return diary_df
@@ -114,9 +118,12 @@ def diarStats(diary_df, url):
 # summary stats
 def summary(df):
 
+    # create df with no duplicates
+    df_unique = df.drop_duplicates('id')
+
     # rating mean, min, max
     rating = {
-    'rating': [round(df["film_rating"].mean(),2), round(df["film_rating"].max(),2), round(df["film_rating"].min(),2)]
+    'rating': [round(df_unique["film_rating"].mean(),2), round(df_unique["film_rating"].max(),2), round(df_unique["film_rating"].min(),2)]
     }
 
     rating_df = pd.DataFrame(rating)
@@ -124,7 +131,7 @@ def summary(df):
     print("Max: " + str(rating_df.at[1, "rating"]) + "           Min: "+ str(rating_df.at[2, "rating"]))
 
     # liked counts
-    liked_df = df.groupby(['liked']).size()
+    liked_df = df_unique.groupby(['liked']).size()
     liked_df = pd.DataFrame(liked_df)
     liked_df.columns = ['count']
     print("\nYou have liked " + str( round( (liked_df.at[0,"count"]/ liked_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
@@ -135,14 +142,15 @@ def summary(df):
     date_df.columns = ['count']
     print(date_df)
 
-    # rewatch counts
-    rewatch_df = pd.DataFrame(df.groupby(['rewatch']).size())
-    rewatch_df.columns = ['count']
-    prit(rewatch_df)
-
     # reviewed counts
-    review_df = pd.DataFrame(df.groupby(['reviewed']).size())
+    review_df = pd.DataFrame(df_unique.groupby(['reviewed']).size())
     review_df.columns=["count"]
     print("..and reviewed " + str( round( (review_df.at[1,"count"]/ review_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
+
+    # most rewatched
+    most_rewatched_id = df.id.mode()[0]
+    print( df.query('id == @most_rewatched_id').iloc[[0]]['film_name'] )
+
+    
 
 main("riannecantos")
