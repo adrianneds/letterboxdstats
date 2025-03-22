@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 from dash import Dash, dcc, html, Input, Output
+from datetime import datetime
 
 # create soup
 def init_soup(url):
@@ -38,8 +39,8 @@ def main(username):
     print(data_df)
     print("==================================================================================================================")
 
-    # print("Summary stats")
-    # summary(data_df)
+    print("Summary stats")
+    summary(data_df)
 
 def init_dframe():
     # create a data frame
@@ -49,7 +50,8 @@ def init_dframe():
         "release_date": [],
         "liked":[],
         "reviewed":[],
-        "month_year":[],
+        "date":[],
+        "rewatch":[]
     }
     return(pd.DataFrame(diary))
 
@@ -91,16 +93,22 @@ def getLikeReview(entry):
 
     return [liked, review]
 
+def getRewatch(entry):
+    rewatch_td = entry.find('td', class_='td-rewatch center icon-status-off')
+    if rewatch_td is None:
+        rewatch = True
+    else:
+        rewatch = False
+    return rewatch
+
 def diarStats(diary_df, url):
     soup = init_soup(url)
     entries = soup.find_all('tr', class_="diary-entry-row") 
     newRows = [pd.DataFrame([ {'film_name': getFilmDetails(li)[0], 'film_rating': getRating(li),
                             "release_date": getFilmDetails(li)[1], "liked":getLikeReview(li)[0],
-                            "reviewed":getLikeReview(li)[1], "month_year": getDate(li)} ]) for li in entries]
-    diary_1 = pd.concat( newRows , ignore_index=True)
-    diary_df = pd.concat([diary_df, diary_1], ignore_index=True)
-
-      #      diary_df = pd.concat([diary_df, pd.DataFrame([newRow])], ignore_index=True)
+                            "reviewed":getLikeReview(li)[1], "date": getDate(li), "rewatch": getRewatch(li)} ]) for li in entries]
+    diary_page = pd.concat( newRows , ignore_index=True)
+    diary_df = pd.concat([diary_df, diary_page], ignore_index=True)
     return diary_df
 
 # summary stats
@@ -122,8 +130,15 @@ def summary(df):
     print("\nYou have liked " + str( round( (liked_df.at[0,"count"]/ liked_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
     # print(liked_df)
 
-    # release date counts
-    # print(df.groupby(['release_date']).size().max())
+    # watch frequency counts
+    date_df = pd.DataFrame(df.groupby(['date']).size())
+    date_df.columns = ['count']
+    print(date_df)
+
+    # rewatch counts
+    rewatch_df = pd.DataFrame(df.groupby(['rewatch']).size())
+    rewatch_df.columns = ['count']
+    prit(rewatch_df)
 
     # reviewed counts
     review_df = pd.DataFrame(df.groupby(['reviewed']).size())
