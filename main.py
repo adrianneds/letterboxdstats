@@ -161,26 +161,40 @@ def summary(df):
     most_rewatched_id = df.id.mode()[0]
     print( df.query('id == @most_rewatched_id').iloc[[0]]['film_name'] )
 
+    filmd_df = getFilmDetails(df_unique)
+
     # top 5 genres
-    genre_df = getFilmDetails(df_unique)
-    genre_df.columns = ['genre']
-    genre_counts = genre_df.groupby(['genre']).size()
+    genre_counts = filmd_df.iloc[:,0].to_list()
+    genre_df = pd.DataFrame(flatten2D(genre_counts))
+    genre_df = genre_df.groupby([0]).size()
+    print(genre_df)
 
     # top 5 directors
+    director_counts = filmd_df.iloc[:,1].to_list()
+    dir_df = pd.DataFrame(flatten2D(director_counts))
+    dir_df = dir_df.groupby([0]).size()
+    print(dir_df)
+
+    # top 5 actors
+    actor_counts = filmd_df.iloc[:,2].to_list()
+    act_df = pd.DataFrame(flatten2D(actor_counts))
+    act_df = act_df.groupby([0]).size()
+    print(act_df)
+
+def flatten2D(lis):
+    flat_lis = [x for l in lis for x in l]
+    return(flat_lis)
 
 
 def getFilmDetails(df):
     url_list = df.iloc[:,7].to_list()
     # series = df.iloc[:,7]
 
-    executor = ThreadPoolExecutor(25)
+    executor = ThreadPoolExecutor(35)
     results = executor.map(init_soup, url_list)
-    genres = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup) } for soup in results ]
-    g_list = [x for l in genres for x in l]
-    g_df = pd.DataFrame(g_list)
-
-
-    return g_df
+    d_list2d = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup)} for soup in results ]
+    d_df = pd.DataFrame(d_list2d)
+    return d_df
 
 def getGenres(soup):
     genres = soup.find('div', id='tab-genres').find('div', class_='text-sluglist capitalize').find_all('a')[:5]
@@ -188,18 +202,13 @@ def getGenres(soup):
     return(genresList)
 
 def getDirector(soup):
-    directors = soup.find('div', id='c').find('div', class_='text-sluglist').find_all('a')[:5]
+    directors = soup.find('div', id='tab-crew').find('div', class_='text-sluglist').find_all('a')[:5]
     directorList = [  d.text for d in directors ]
     return directorList
 
 def getActors(soup):
-    actors = soup.find('div', id = 'cast-list text-sluglist').find_all('a')[:5]
+    actors = soup.find('div', class_='cast-list text-sluglist').find_all('a')[:5]
     actorsList = [  a.text for a in actors ]
     return actorsList
-
-def getLanguage(soup):
     
-
-    
-    
-main("riannecantos")
+main("essi_17")
