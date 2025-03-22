@@ -6,11 +6,14 @@ import plotly.express as px
 import plotly.graph_objs as go
 from dash import Dash, dcc, html, Input, Output
 from datetime import datetime
+from selenium import webdriver
+from lxml import etree
+from concurrent.futures import ThreadPoolExecutor
 
 # create soup
 def init_soup(url):
     p = requests.get(url)
-    soup = BeautifulSoup(p.content, 'html5lib')
+    soup = BeautifulSoup(p.content, 'lxml')
     return(soup)
 
 # setup and retrieving links
@@ -32,7 +35,7 @@ def main(username):
     data_df = init_dframe()
 
     for url in url_set:
-        data_df = diarStats(data_df, url)
+        data_df = diarStats(data_df, url, username)
     
     print("==================================================================================================================")
     print( username + "'s Letterboxd Diary")
@@ -40,6 +43,8 @@ def main(username):
     print("==================================================================================================================")
 
     print("Summary stats")
+    genres = getFilmDetails(data_df)
+    print(genres)
     summary(data_df)
 
 def init_dframe():
@@ -61,11 +66,14 @@ def getDate(entry):
     date = (datetd.find('a')['href'])[-11:-1]
     return date
 
-def getFilmDetails(entry):
+def getFilmDiaryDetails(entry):
     h3 = entry.find_all('h3', class_='headline-3 prettify')[0]
     filmName = h3.find_all('a')[0].text
     relDate = entry.find('td', class_="td-released center").find('span').text
-    return [filmName, relDate]
+
+    film_iden = entry.find('div', class_= 'film-poster')['data-film-slug']
+    filmURL = "https://letterboxd.com/film/" + film_iden + "/"
+    return [filmName, relDate, filmURL]
 
 def getRating(entry):
     rating = entry.find_all('span', class_="rating")
@@ -105,14 +113,16 @@ def getId(entry):
     id = entry.find('div', class_='film-poster')['data-film-id']
     return id
 
-def diarStats(diary_df, url):
+def diarStats(diary_df, url, username):
     soup = init_soup(url)
     entries = soup.find_all('tr', class_="diary-entry-row") 
-    newRows = [pd.DataFrame([ {'id':getId(li), 'film_name': getFilmDetails(li)[0], 'film_rating': getRating(li),
-                            "release_date": getFilmDetails(li)[1], "liked":getLikeReview(li)[0],
-                            "reviewed":getLikeReview(li)[1], "date": getDate(li)} ]) for li in entries]
+    newRows = [pd.DataFrame([ {'id':getId(li), 'film_name': getFilmDiaryDetails(li)[0], 'film_rating': getRating(li),
+                            "release_date": getFilmDiaryDetails(li)[1], "liked":getLikeReview(li)[0],
+                            "reviewed":getLikeReview(li)[1], "date": getDate(li), "url": getFilmDiaryDetails(li)[2]} ]) for li in entries]
     diary_page = pd.concat( newRows , ignore_index=True)
     diary_df = pd.concat([diary_df, diary_page], ignore_index=True)
+    #genre_df = getFilmDetails(entries)
+    diary_df = pd.DataFrame(diary_df)
     return diary_df
 
 # summary stats
@@ -151,6 +161,45 @@ def summary(df):
     most_rewatched_id = df.id.mode()[0]
     print( df.query('id == @most_rewatched_id').iloc[[0]]['film_name'] )
 
+    # top 5 genres
+    genre_df = getFilmDetails(df_unique)
+    genre_df.columns = ['genre']
+    genre_counts = genre_df.groupby(['genre']).size()
+
+    # top 5 directors
+
+
+def getFilmDetails(df):
+    url_list = df.iloc[:,7].to_list()
+    # series = df.iloc[:,7]
+
+    executor = ThreadPoolExecutor(25)
+    results = executor.map(init_soup, url_list)
+    genres = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup) } for soup in results ]
+    g_list = [x for l in genres for x in l]
+    g_df = pd.DataFrame(g_list)
+
+
+    return g_df
+
+def getGenres(soup):
+    genres = soup.find('div', id='tab-genres').find('div', class_='text-sluglist capitalize').find_all('a')[:5]
+    genresList = [ g.text  for g in genres ]
+    return(genresList)
+
+def getDirector(soup):
+    directors = soup.find('div', id='c').find('div', class_='text-sluglist').find_all('a')[:5]
+    directorList = [  d.text for d in directors ]
+    return directorList
+
+def getActors(soup):
+    actors = soup.find('div', id = 'cast-list text-sluglist').find_all('a')[:5]
+    actorsList = [  a.text for a in actors ]
+    return actorsList
+
+def getLanguage(soup):
     
 
+    
+    
 main("riannecantos")
