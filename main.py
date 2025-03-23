@@ -166,33 +166,39 @@ def summary(df):
     # top 5 genres
     genre_counts = filmd_df.iloc[:,0].to_list()
     genre_df = pd.DataFrame(flatten2D(genre_counts))
-    genre_df = genre_df.groupby([0]).size()
-    print(genre_df)
+    genre_df = pd.DataFrame(genre_df.groupby([0]).size())
+    genre_df.columns = ['count']
+    print("========== TOP 5 GENRES ==========")
+    gcounts = genre_df.sort_values(by='count', ascending=False).head(5)
+    print(gcounts)
 
     # top 5 directors
     director_counts = filmd_df.iloc[:,1].to_list()
     dir_df = pd.DataFrame(flatten2D(director_counts))
-    dir_df = dir_df.groupby([0]).size()
-    print(dir_df)
+    dir_df = pd.DataFrame(dir_df.groupby([0]).size())
+    dir_df.columns = ['count']
+    print("========== TOP 5 DIRECTORS ==========")
+    dcounts = dir_df.sort_values(by='count', ascending=False).head(5)
+    print(dcounts)
 
     # top 5 actors
     actor_counts = filmd_df.iloc[:,2].to_list()
     act_df = pd.DataFrame(flatten2D(actor_counts))
-    act_df = act_df.groupby([0]).size()
-    print(act_df)
+    act_df = pd.DataFrame(act_df.groupby([0]).size())
+    act_df.columns = ['count']
+    print("========== TOP 5 ACTORS ==========")
+    acounts = act_df.sort_values(by='count', ascending=False).head(5)
+    print(acounts)
 
-def flatten2D(lis):
-    flat_lis = [x for l in lis for x in l]
-    return(flat_lis)
-
+    # average movie rating
+    df_unique['ave_rating'] = filmd_df['averageRating']
+    print(df_unique)
 
 def getFilmDetails(df):
     url_list = df.iloc[:,7].to_list()
-    # series = df.iloc[:,7]
-
     executor = ThreadPoolExecutor(35)
     results = executor.map(init_soup, url_list)
-    d_list2d = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup)} for soup in results ]
+    d_list2d = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup), 'averageRating': getAveRating(soup)} for soup in results ]
     d_df = pd.DataFrame(d_list2d)
     return d_df
 
@@ -210,5 +216,17 @@ def getActors(soup):
     actors = soup.find('div', class_='cast-list text-sluglist').find_all('a')[:5]
     actorsList = [  a.text for a in actors ]
     return actorsList
+
+def getAveRating(soup):
+    aveRating_find = soup.find_all('meta', attrs={'name':'twitter:data2'})
+    if(aveRating_find is not None):
+        aveRating = float(aveRating_find[0]['content'][:3])
+        return aveRating
+    else:
+        return None
+
+def flatten2D(lis):
+    flat_lis = [x for l in lis for x in l]
+    return(flat_lis)
     
-main("essi_17")
+# main("essi_17")
