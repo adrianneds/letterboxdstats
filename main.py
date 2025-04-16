@@ -45,7 +45,8 @@ def main(username):
     print("Summary stats")
     genres = getFilmDetails(data_df)
     print(genres)
-    summary(data_df)
+    summ = summary(data_df)
+    return summ
 
 def init_dframe():
     # create a data frame
@@ -144,8 +145,8 @@ def summary(df):
     liked_df = df_unique.groupby(['liked']).size()
     liked_df = pd.DataFrame(liked_df)
     liked_df.columns = ['count']
-    print("\nYou have liked " + str( round( (liked_df.at[0,"count"]/ liked_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
-    # print(liked_df)
+    print("\nYou have liked " + str( round( (liked_df.at[1,"count"]/ liked_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
+    print(liked_df)
 
     # watch frequency counts
     date_df = pd.DataFrame(df.groupby(['date']).size())
@@ -194,6 +195,13 @@ def summary(df):
     df_unique['ave_rating'] = filmd_df['averageRating']
     print(df_unique)
 
+    # output
+    output = { 'nofilms': len(df), 'liked': liked_df};
+
+    return output
+
+
+
 def getFilmDetails(df):
     url_list = df.iloc[:,7].to_list()
     executor = ThreadPoolExecutor(35)
@@ -229,4 +237,4 @@ def flatten2D(lis):
     flat_lis = [x for l in lis for x in l]
     return(flat_lis)
     
-# main("essi_17")
+#print(main("essi_17"))
