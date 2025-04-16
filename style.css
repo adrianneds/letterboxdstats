@@ -3,10 +3,29 @@
     src: url(Akzidenz-grotesk-bold.woff);
 }
 
+/* main container for all divs */
 .main-container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+/* input section */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #e7e9eb;
+    width: 100%;
+    height: auto;
+    flex: 1;
+    margin: 0 10px;
+    padding-bottom:20px;
 }
 
 #inputuser {
@@ -19,19 +38,6 @@
     font-size: 30px;
 }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #e7e9eb;
-    width: 800px;
-    height: auto;
-    flex: 1;
-    margin: 0 10px;
-    padding-bottom:20px;
-}
-
 #enterUser {
     font-family: 'Courier New', Courier, monospace;
     font-size: 20px;
@@ -41,6 +47,41 @@
 #submitButton {
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
+}
+
+/* section 1: watch frequencies */
+.data-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    flex: 1;
+    width: 100%;
+    margin: 0 10px;
+    padding-bottom:20px;
+}
+
+.data-subcontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.nofilms_header {
+    font-family: Akzidenz;
+    font-size: 25px;
+    color: #e7e9eb;
+}
+
+#result {
+    font-family: Akzidenz;
+    font-weight: bold;
+    font-size: 90px;
+    color: #fc7f01;
+    margin-top: 0px;
+    margin-bottom:0px;
 }
 
 .container2{

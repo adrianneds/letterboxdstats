@@ -150,7 +150,11 @@ def summary(df):
 
     # watch frequency counts
     date_df = pd.DataFrame(df.groupby(['date']).size())
-    date_df.columns = ['count']
+    date_df = date_df.reset_index()
+    date_df.columns = ['date', 'count']
+    dates = pd.date_range(date_df.head(1),date_df.tail(1))
+    dates = pd.DataFrame(dates)
+    date_join_df = date_df.join(dates, lsuffix='_caller', rsuffix='_other')
     print(date_df)
 
     # reviewed counts
@@ -196,7 +200,7 @@ def summary(df):
     print(df_unique)
 
     # output
-    output = { 'nofilms': len(df), 'liked': liked_df};
+    output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_df};
 
     return output
 

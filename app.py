@@ -1,6 +1,9 @@
 import seaborn as sns
 from faicons import icon_svg
 from pathlib import Path
+import plotly.express as px
+import pandas as pd
+from main import *
 
 # Import data from shared.py
 from shared import app_dir, df
@@ -10,17 +13,53 @@ from shiny import App, reactive, render, ui
 www_dir = Path(__file__).parent / "www"
 
 app_ui = ui.div(
+
+    # input field
     ui.div(
         ui.p("Enter your Letterboxd username", class_="input-header"),
         ui.input_text(id="inputuser", label="",value="@useruser"),
+        ui.input_action_button("submit", "submit"),
         class_ = "container"
     ),
+
+    # films logged, watch freq
+    ui.div(
+        ui.div(
+            ui.p("You have logged", class_="nofilms_header"),
+            ui.output_text_verbatim("result"),
+            ui.p("films", class_="nofilms_header"),
+            ui.output_plot("line1"),
+            class_="data-subcontainer"
+        ),
+        class_= "data-container"
+    ),
+
+    # other properties for main container
     ui.tags.style("@font-face { font-family: Akzidenz; src: url(Akzidenz-grotesk-bold.woff); }"),
+    ui.tags.style(".data-container { background-image: url(purp-bg.png); }"),
     ui.include_css(app_dir / "style.css"),
     class_ = "main-container"
 )
 
 def server(input, output, session):
+
+    @reactive.event(input.submit, ignore_none=True)
+    def submit():
+        username = input.inputuser()
+        user_stats = main(username)
+        return user_stats
+    
+    @render.text
+    def result():
+        return submit()['nofilms']
+    
+    @render.plot
+    def line1():
+        df = submit()['watch_counts']
+        fig = px.line(submit(), x='year', y='lifeExp', color='#fc7f01')
+        fig.show()
+        return 
+    
     return 
 
 app = App(app_ui, server, static_assets=www_dir, debug=False)
