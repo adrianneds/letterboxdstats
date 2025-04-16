@@ -4,6 +4,7 @@ from pathlib import Path
 import plotly.express as px
 import pandas as pd
 from main import *
+from shinywidgets import output_widget, render_widget  
 
 # Import data from shared.py
 from shared import app_dir, df
@@ -25,11 +26,42 @@ app_ui = ui.div(
     # films logged, watch freq
     ui.div(
         ui.div(
-            ui.p("You have logged", class_="nofilms_header"),
-            ui.output_text_verbatim("result"),
-            ui.p("films", class_="nofilms_header"),
-            ui.output_plot("line1"),
+            ui.div(
+                ui.p("You have logged", class_="nofilms_header"),
+                ui.output_text_verbatim("result"),
+                ui.p("films", class_="nofilms_header"),
+                class_="nofilms_header_container"
+            ),
+            ui.div(
+                output_widget("line1"),
+                class_="line-container"
+            ),
             class_="data-subcontainer"
+        ),
+        ui.div(
+            ui.p("Most Watches*", class_="watches-header"),
+            ui.div(
+                ui.div(
+                    ui.output_text_verbatim("mostWatchesCount"),
+                    class_="green-box"
+                    ),
+                ui.output_text_verbatim("mostWatches"),
+                class_="watches-container"
+                ),
+
+            ui.p("Least Watches*", class_="watches-header"),
+            ui.div(
+                ui.div(
+                    ui.output_text_verbatim("leastWatchesCount"),
+                    class_="green-box"
+                    ),
+                ui.output_text_verbatim("leastWatches"),
+                class_="watches-container"
+                ),
+
+            ui.p("most recent watches > 0", class_="desc"),
+
+            class_="data-subcontainer2"
         ),
         class_= "data-container"
     ),
@@ -43,24 +75,74 @@ app_ui = ui.div(
 
 def server(input, output, session):
 
+    user_stats = reactive.value(None)
+
+    @reactive.effect
     @reactive.event(input.submit, ignore_none=True)
     def submit():
         username = input.inputuser()
-        user_stats = main(username)
-        return user_stats
-    
+        new_stats = main(username)
+        user_stats.set(new_stats)
+        return
+
     @render.text
     def result():
-        return submit()['nofilms']
+        new_stats = user_stats.get()
+        if (new_stats is None):
+            return None
+        else:
+            return str(new_stats['nofilms'])
     
-    @render.plot
+    @render_widget
     def line1():
-        df = submit()['watch_counts']
-        fig = px.line(submit(), x='year', y='lifeExp', color='#fc7f01')
-        fig.show()
-        return 
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            df = new_stats['watch_counts']
+            fig = px.line(df, x='date', y='count')
+            fig.update_traces(line_color='#fc7f01')
+            fig.update_yaxes(title_font_color="white")
+            fig.update_xaxes(title_font_color="white")
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            })
+            return fig
     
-    return 
+    @render.text
+    def mostWatches():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['watch_freq'][0]
+        
+    @render.text
+    def leastWatches():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['watch_freq'][1]
+        
+    @render.text
+    def mostWatchesCount():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['watch_freq'][2]
+        
+    @render.text
+    def leastWatchesCount():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['watch_freq'][3]
+    
+    return
 
 app = App(app_ui, server, static_assets=www_dir, debug=False)
 

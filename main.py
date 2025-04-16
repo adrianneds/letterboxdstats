@@ -9,6 +9,8 @@ from datetime import datetime
 from selenium import webdriver
 from lxml import etree
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+import numpy as np
 
 # create soup
 def init_soup(url):
@@ -64,7 +66,7 @@ def init_dframe():
 def getDate(entry):
     # month and year
     datetd = entry.find('td', class_='td-day diary-day center')
-    date = (datetd.find('a')['href'])[-11:-1]
+    date = (datetd.find('a')['href'])[-11:-1].replace("/","-")
     return date
 
 def getFilmDiaryDetails(entry):
@@ -152,10 +154,32 @@ def summary(df):
     date_df = pd.DataFrame(df.groupby(['date']).size())
     date_df = date_df.reset_index()
     date_df.columns = ['date', 'count']
-    dates = pd.date_range(date_df.head(1),date_df.tail(1))
-    dates = pd.DataFrame(dates)
-    date_join_df = date_df.join(dates, lsuffix='_caller', rsuffix='_other')
-    print(date_df)
+    start_date = date_df.head(1)['date'].to_string(header=False, index=False)
+    end_date = date_df.tail(1)['date'].to_string(header=False, index=False)
+    dates = pd.DataFrame(pd.date_range(start_date, end_date))
+    dates.columns = ['date']
+    def substr(row):
+        row = str(row)[:10]
+        return row
+    dates = dates.applymap(substr)
+    # print(dates)
+    date_join_df = dates.merge(date_df, left_on='date', right_on='date', how="outer")
+    date_join_df = date_join_df.fillna(0)
+    print(date_join_df)
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    #     print(date_join_df)
+
+    # most , least watches
+    max = date_df.loc[date_df['count'].idxmax()]
+    min = date_df.loc[date_df['count'].idxmin(skipna=True)]
+
+    most = str(max['date'])
+    least = str(min['date'])
+
+    datetime_most = datetime.strptime(most, '%Y-%m-%d').strftime('%b %d %Y')
+    datetime_least = datetime.strptime(least, '%Y-%m-%d').strftime('%b %d %Y')
+
+    watch_freq_lis = [datetime_most, datetime_least, str(max['count']), str(min['count'])]
 
     # reviewed counts
     review_df = pd.DataFrame(df_unique.groupby(['reviewed']).size())
@@ -200,7 +224,8 @@ def summary(df):
     print(df_unique)
 
     # output
-    output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_df};
+    output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_join_df,
+              'watch_freq': watch_freq_lis};
 
     return output
 
