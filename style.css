@@ -1,11 +1,22 @@
-body {
+@font-face {
+    font-family: Akzidenz;
+    src: url(Akzidenz-grotesk-bold.woff);
+}
+
+.main-container {
     display: flex;
     justify-content: center;
+    box-sizing: border-box;
 }
 
 #inputuser {
-    font-family:'Courier New', Courier, monospace;
-    width: 80%;
+    font-family: Akzidenz !important;
+    width: 105%;
+}
+
+.input-header {
+    font-family: Akzidenz !important;
+    font-size: 30px;
 }
 
 .container {
@@ -13,7 +24,12 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 1000px;
+    background-color: #e7e9eb;
+    width: 800px;
+    height: auto;
+    flex: 1;
+    margin: 0 10px;
+    padding-bottom:20px;
 }
 
 #enterUser {
