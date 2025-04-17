@@ -81,24 +81,23 @@ app_ui = ui.div(
     # rev.iew section
     ui.div(
         ui.div(
-            ui.h1("Popular Review", class_="popular-review-header"), 
+            ui.output_text_verbatim("popularReviewHeader1"), 
             ui.output_text_verbatim("popularReview1"),    # contains review
-            ui.output_text_verbatim("userNameReview"),   
+            ui.output_text_verbatim("userNameReview1"),   
             ui.output_text_verbatim("filmTitleReview1"),
-            ui.output_text_verbatim("noLikesReview"),
+            ui.output_text_verbatim("noLikesReview1"),
             class_="review-subsection"
         ),
         ui.div(
-            ui.h1("Popular Review", class_="popular-review-header"),
+            ui.output_text_verbatim("popularReviewHeader2"), 
             ui.output_text_verbatim("popularReview2"),   # contains review
-            ui.output_text_verbatim("userNameReview"),   
+            ui.output_text_verbatim("userNameReview2"),   
             ui.output_text_verbatim("filmTitleReview2"),
-            ui.output_text_verbatim("noLikesReview"),
+            ui.output_text_verbatim("noLikesReview2"),
             class_="review-subsection"
         ),
         ui.div(
-
-            output_widget("review-pie"),
+            output_widget("reviewPie"),
             class_="review-subsection"
         ),
 
@@ -118,6 +117,7 @@ app_ui = ui.div(
 def server(input, output, session):
 
     user_stats = reactive.value(None)
+    user_reviews = reactive.value(None)
 
     @reactive.effect
     @reactive.event(input.submit, ignore_none=True)
@@ -125,6 +125,8 @@ def server(input, output, session):
         username = input.inputuser()
         new_stats = main(username)
         user_stats.set(new_stats)
+        new_review = getMostPopularReview(username)
+        user_reviews.set(new_review)
         return
 
     @render.text
@@ -183,6 +185,87 @@ def server(input, output, session):
             return None
         else:
             return new_stats['watch_freq'][3]
+        
+    # for reviews
+    @render.text
+    def popularReviewHeader1():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return str(new_reviews['status'])
+
+    @render.text
+    def popularReviewHeader2():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return str(new_reviews['status'])
+
+    @render.text
+    def popularReview1():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return str(new_reviews['mostPop'][1])
+        
+    @render.text
+    def popularReview2():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return str(new_reviews['mostPop2'][1])
+        
+    @render.text
+    def filmTitleReview1():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return "on " + str(new_reviews['mostPop'][0])
+        
+    @render.text
+    def filmTitleReview2():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return "on " + str(new_reviews['mostPop2'][0])
+        
+    @render.text
+    def noLikesReview1():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return str(new_reviews['mostPop'][2]) + " likes"
+        
+    @render.text
+    def noLikesReview2():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return str(new_reviews['mostPop2'][2]) + " likes"
+        
+    @render.text
+    def userNameReview1():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return "——————" + str(input.inputuser())
+        
+    @render.text
+    def userNameReview2():
+        new_reviews = user_reviews.get()
+        if new_reviews is None:
+            return None
+        else:
+            return "——————" + str(input.inputuser())
     
     return
 

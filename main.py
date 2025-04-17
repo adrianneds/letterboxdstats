@@ -236,20 +236,21 @@ def getMostPopularReview(username):
     if (film_details is None):
         return None
     else:
-        mostPopular = film_details[2]
-        mostPopularReview = [
-            mostPopular.find('h2', class_="headline-2").text,   # title
-            mostPopular.find('div', class_="body-text").find('p').text, # revie w
-            mostPopular.find('p', class_='like-link-target')['data-count'] # no of likes
-        ]
+        if (len(film_details) == 2 or len(film_details) == 3):
+            return { 'status': 'Recent Review', 'mostPop': getReview(film_details, 0), 'mostPop2': getReview(film_details, 1) }
+        if (len(film_details)== 1):
+            return { 'status': 'Popular Review', 'mostPop': getReview(film_details, 0), 'mostPop2': None} # most recent if no popular reviews
         if (len(film_details) == 4):
-            mostPopular2 = film_details[3]
-            mostPopularReview2 = [
-                mostPopular2.find('h2', class_="headline-2").text,   # title
-                mostPopular2.find('div', class_="body-text").find('p').text, # revie w
-                mostPopular2.find('p', class_='like-link-target')['data-count'] # no of likes
-            ]
-        return { 'mostPop':mostPopularReview, 'mostPop2':mostPopularReview2 }
+            return { 'status': 'Popular Review', 'mostPop':getReview(film_details, 2), 'mostPop2':getReview(film_details, 3) }
+    
+def getReview(film_details, index):
+    review = film_details[index]
+    review = [
+        review.find('h2', class_="headline-2").text,   # title
+        review.find('div', class_="body-text").find('p').text, # revie.w
+        review.find('p', class_='like-link-target')['data-count'] # no of likes
+    ]
+    return review
 
 def getFilmDetails(df):
     url_list = df.iloc[:,7].to_list()
@@ -288,4 +289,5 @@ def flatten2D(lis):
     
 #print(main("essi_17"))
 
-print(getMostPopularReview('sberrymilky'))
+#print(getMostPopularReview('sberrymilky'))
+print(getMostPopularReview('essi_17'))
