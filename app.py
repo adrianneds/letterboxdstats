@@ -112,8 +112,36 @@ app_ui = ui.div(
             output_widget("reviewPie"),
             class_="review-subsection"
         ),
-
         class_="review-section"
+    ),
+    
+    # average rating, most watched directors/actors, liked % section
+    ui.div (
+        ui.div(
+            ui.div(
+                class_="rating-plot"
+            ),
+            ui.div(
+                ui.div(
+                    class_="most-directors"
+                ),
+                ui.div(
+                    class_="most-actors"
+                ),
+                class_="bar-graphs"
+            ),
+            class_="rating-subsection"
+        ),
+        ui.div(
+            ui.div(
+                class_="minmax-ave-rating"
+            ),
+            ui.div(
+                class_="films-liked-chart"
+            ),
+            class_="rating-subsection"
+        ),
+        class_="rating-section"
     ),
 
     # other properties for main container
@@ -299,7 +327,12 @@ def server(input, output, session):
             fig.update_layout({
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
             'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            })
+            }, legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=-0.2,
+                    xanchor="right",
+                    x=0.8), margin=dict(t=0, b=0, l=0, r=0.2))
             return fig
     return
 

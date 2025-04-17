@@ -101,6 +101,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    row-gap: 1px;
 }
 
 .nofilms_header {
@@ -112,7 +113,7 @@ body {
 #result {
     font-family: Akzidenz;
     font-weight: bold;
-    font-size: 90px;
+    font-size: 120px;
     color: #fc7f01;
     margin-top: 0px;
     margin-bottom:0px;
@@ -205,6 +206,7 @@ body {
     font-family: Akzidenz;
     color:#fc7f01;
     font-size: 18px;
+    text-align: center;
 }
 
 #userNameReview1, #userNameReview2, #filmTitleReview1, #filmTitleReview2 {

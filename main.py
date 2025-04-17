@@ -45,8 +45,8 @@ def main(username):
     print("==================================================================================================================")
 
     print("Summary stats")
-    genres = getFilmDetails(data_df)
-    print(genres)
+    # genres = getFilmDetails(data_df)
+    # print(genres)
     summ = summary(data_df)
     return summ
 
@@ -133,6 +133,10 @@ def summary(df):
 
     # create df with no duplicates
     df_unique = df.drop_duplicates('id')
+
+    # film details
+    fdetails = getFilmDetails(df_unique)
+    print(fdetails)
 
     # rating mean, min, max
     rating = {
@@ -256,7 +260,7 @@ def getReview(film_details, index):
 
 def getFilmDetails(df):
     url_list = df.iloc[:,7].to_list()
-    executor = ThreadPoolExecutor(35)
+    executor = ThreadPoolExecutor(50)
     results = executor.map(init_soup, url_list)
     d_list2d = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup), 'averageRating': getAveRating(soup)} for soup in results ]
     d_df = pd.DataFrame(d_list2d)
