@@ -119,27 +119,38 @@ app_ui = ui.div(
     ui.div (
         ui.div(
             ui.div(
+                ui.h1("Letterboxd Average Rating vs. Your Rating", class_="rating-section-header"),
+                output_widget("ratingScatterplot"),
                 class_="rating-plot"
             ),
             ui.div(
                 ui.div(
+                    ui.h1("Most Watched Directors", class_="rating-section-header"),
                     class_="most-directors"
                 ),
                 ui.div(
+                    ui.h1("Most Watched Actors", class_="rating-section-header"),
                     class_="most-actors"
                 ),
                 class_="bar-graphs"
             ),
-            class_="rating-subsection"
+            class_="rating-subsection1"
         ),
         ui.div(
             ui.div(
+                ui.h1("minimum rating", class_="rating-section-header"),
+                ui.output_text_verbatim("minRating"),
+                ui.h1("maximum rating", class_="rating-section-header"),
+                ui.output_text_verbatim("maxRating"),
+                ui.h1("average rating", class_="rating-section-header"),
+                ui.output_text_verbatim("aveRating"),
                 class_="minmax-ave-rating"
             ),
             ui.div(
+                ui.h1("Films Liked ❤︎", class_="rating-section-header"),
                 class_="films-liked-chart"
             ),
-            class_="rating-subsection"
+            class_="rating-subsection2"
         ),
         class_="rating-section"
     ),
@@ -149,7 +160,7 @@ app_ui = ui.div(
     "@font-face { font-family: AkzidenzLight; src: url(Akzidenz-grotesk-ce-light.woff); }" 
     "@font-face { font-family: CooperItalic; src: url(CooperLtBT-Italic.woff) }"),
 
-    ui.tags.style(".data-container { background-image: url(purp-bg.png); }"),
+    ui.tags.style(".data-container, .rating-section { background-image: url(purp-bg.png); }"),
     ui.include_css(app_dir / "style.css"),
     class_ = "main-container"
 )
