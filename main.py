@@ -91,9 +91,9 @@ def getLikeReview(entry):
     liked = False
     liked_data = entry.find('td', class_='td-like center diary-like').find('span', class_="icon-liked")
     if liked_data is not None:
-        liked = True
+        liked = "Liked"
     else:
-        liked = False
+        liked = "Not Liked"
 
     review = False
     review_data = entry.find('td', class_='td-review').find('a')
@@ -145,20 +145,22 @@ def summary(df):
     #     print(ratingVsAvgRating)
 
     # rating mean, min, max
-    rating = {
-    'rating': [round(df_unique["film_rating"].mean(),2), round(df_unique["film_rating"].max(),2), round(df_unique["film_rating"].min(),2)]
-    }
+    ratingLis = [round(df_unique["film_rating"].mean(),2), round(df_unique["film_rating"].max(),2), round(df_unique["film_rating"].min(),2)]
+    # rating = {
+    # 'rating': [round(df_unique["film_rating"].mean(),2), round(df_unique["film_rating"].max(),2), round(df_unique["film_rating"].min(),2)]
+    # }
 
-    rating_df = pd.DataFrame(rating)
-    print("\nYour average rating is " + str(rating_df.at[0, "rating"]));
-    print("Max: " + str(rating_df.at[1, "rating"]) + "           Min: "+ str(rating_df.at[2, "rating"]))
+    # rating_df = pd.DataFrame(rating)
+    # print("\nYour average rating is " + str(rating_df.at[0, "rating"]));
+    # print("Max: " + str(rating_df.at[1, "rating"]) + "           Min: "+ str(rating_df.at[2, "rating"]))
 
     # liked counts
     liked_df = df_unique.groupby(['liked']).size()
     liked_df = pd.DataFrame(liked_df)
-    liked_df.columns = ['count']
-    print("\nYou have liked " + str( round( (liked_df.at[1,"count"]/ liked_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
-    print(liked_df)
+    liked_df = liked_df.reset_index()
+    liked_df.columns = ["Liked","Count"]
+    # print("\nYou have liked " + str( round( (liked_df.at[1,"count"]/ liked_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
+    # print(liked_df)
 
     # watch frequency counts
     date_df = pd.DataFrame(df.groupby(['date']).size())
@@ -244,7 +246,8 @@ def summary(df):
     # output
     output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_join_df,
               'watch_freq': watch_freq_lis, 'review_counts':review_df,
-              'ratingVsAvgRating':ratingVsAvgRating, 'mostDirectors':dcounts, 'mostActors':acounts};
+              'ratingVsAvgRating':ratingVsAvgRating, 'mostDirectors':dcounts, 'mostActors':acounts,
+              'userRatings':ratingLis};
 
     return output
 

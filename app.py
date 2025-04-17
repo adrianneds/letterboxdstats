@@ -150,6 +150,7 @@ app_ui = ui.div(
             ),
             ui.div(
                 ui.h1("Films Liked ❤︎", class_="rating-section-header"),
+                output_widget("likedPie"),
                 class_="films-liked-chart"
             ),
             class_="rating-subsection2"
@@ -402,7 +403,54 @@ def server(input, output, session):
             'paper_bgcolor': 'rgba(0, 0, 0, 0)',
             },font_color="white")
             return fig
-
+        
+    @render.text
+    def minRating():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            min = new_stats['userRatings'][2]
+            return str(min) + "★"
+        
+    @render.text
+    def maxRating():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            max = new_stats['userRatings'][1]
+            return str(max) + "★"
+        
+    @render.text
+    def aveRating():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            ave = new_stats['userRatings'][0]
+            return str(ave) + "★"
+        
+    @render_widget
+    def likedPie():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            df = new_stats['liked']
+            fig = px.pie(df, values="Count", names="Liked", color="Liked", 
+                color_discrete_map={'Liked':'#fc7f01','Not Liked':'#ffbf7f'},
+                width=300, height=300)
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            }, legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=-0.2,
+                    xanchor="right",
+                    x=0.8), margin=dict(t=0, b=0, l=0, r=0.2), )
+            return 
         
     return
 

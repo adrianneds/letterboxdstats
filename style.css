@@ -300,11 +300,49 @@ body {
 
 .minmax-ave-rating {
     border: 1px solid white;
+    padding:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.most-directors, .most-actors {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#minRating, #maxRating {
+    color:#fc7f01;
+}
+
+#aveRating {
+    color:#40baf1;
+}
+
+#minRating, #maxRating, #aveRating {
+    font-family: Akzidenz;
+    font-size: 60px;
+    margin-top:0;
+    margin-bottom: 1;
 }
 
 .container2{
     background-color: #660033;
     color: white;
+}
+
+.rating-subsection2 {
+    margin-left: 15;
+}
+
+.films-liked-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .section{
