@@ -126,10 +126,12 @@ app_ui = ui.div(
             ui.div(
                 ui.div(
                     ui.h1("Most Watched Directors", class_="rating-section-header"),
+                    output_widget("mostDirectors"),
                     class_="most-directors"
                 ),
                 ui.div(
                     ui.h1("Most Watched Actors", class_="rating-section-header"),
+                    output_widget("mostActors"),
                     class_="most-actors"
                 ),
                 class_="bar-graphs"
@@ -197,12 +199,12 @@ def server(input, output, session):
             df = new_stats['watch_counts']
             fig = px.line(df, x='date', y='count')
             fig.update_traces(line_color='#fc7f01')
-            fig.update_yaxes(title_font_color="white")
-            fig.update_xaxes(title_font_color="white")
+            fig.update_yaxes(title_font_color="white", gridcolor='white')
+            fig.update_xaxes(title_font_color="white", gridcolor='white')
             fig.update_layout({
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
             'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-            })
+            },font_color="white")
             return fig
     
     @render.text
@@ -343,94 +345,65 @@ def server(input, output, session):
                     yanchor="bottom",
                     y=-0.2,
                     xanchor="right",
-                    x=0.8), margin=dict(t=0, b=0, l=0, r=0.2))
+                    x=0.8), margin=dict(t=0, b=0, l=0, r=0.2), )
             return fig
+        
+    @render_widget
+    def ratingScatterplot():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            df = new_stats['ratingVsAvgRating']
+            fig = px.strip(df, x='film_rating', y='averageRating', color="film_rating", hover_data=['film_name'], width=900,height=400,
+                             color_discrete_map={ 0:"#d9eee1", 0.5: "#d9eee1", 1: "#bee8cd", 1.5: "#bee8cd",
+                                                 2: "#a6e7bd", 2.5: "#a6e7bd", 3: "#7ce5a2", 3.5: "#7ce5a2",
+                                                  4: "#48e380", 4.5:"#48e380", 5:'#05de54'})
+            fig.update_traces(marker=dict(size=13, line=dict(width=1, color='white')))
+            fig.update_traces(jitter=1)
+            fig.update_yaxes(title_font_color="white", gridcolor="white")
+            fig.update_xaxes(title_font_color="white", gridcolor="white")
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            },font_color="white")
+            return fig
+        
+    @render_widget
+    def mostDirectors():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            df = new_stats['mostDirectors']
+            fig = px.bar(df, x="No. of Films Watched", y="Director", 
+                         orientation='h', color_discrete_sequence=["#40baf1"],
+                         width=400, height=400)
+            fig.update_layout(yaxis=dict(autorange="reversed"))
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            },font_color="white")
+            return fig
+        
+    @render_widget
+    def mostActors():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            df = new_stats['mostActors']
+            fig = px.bar(df, x="No. of Films Watched", y="Actor",
+                         orientation='h', color_discrete_sequence=["#05de54"],
+                         width=400, height=400)
+            fig.update_layout(yaxis=dict(autorange="reversed"))
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            },font_color="white")
+            return fig
+
+        
     return
 
 app = App(app_ui, server, static_assets=www_dir, debug=False)
-
-# app_ui = ui.page_sidebar(
-#     ui.sidebar(
-#         ui.input_slider("mass", "Mass", 2000, 6000, 6000),
-#         ui.input_checkbox_group(
-#             "species",
-#             "Species",
-#             ["Adelie", "Gentoo", "Chinstrap"],
-#             selected=["Adelie", "Gentoo", "Chinstrap"],
-#         ),
-#         title="Filter controls",
-#     ),
-#     ui.layout_column_wrap(
-#         ui.value_box(
-#             "Number of penguins",
-#             ui.output_text("count"),
-#             showcase=icon_svg("earlybirds"),
-#         ),
-#         ui.value_box(
-#             "Average bill length",
-#             ui.output_text("bill_length"),
-#             showcase=icon_svg("ruler-horizontal"),
-#         ),
-#         ui.value_box(
-#             "Average bill depth",
-#             ui.output_text("bill_depth"),
-#             showcase=icon_svg("ruler-vertical"),
-#         ),
-#         fill=False,
-#     ),
-#     ui.layout_columns(
-#         ui.card(
-#             ui.card_header("Bill length and depth"),
-#             ui.output_plot("length_depth"),
-#             full_screen=True,
-#         ),
-#         ui.card(
-#             ui.card_header("Penguin data"),
-#             ui.output_data_frame("summary_statistics"),
-#             full_screen=True,
-#         ),
-#     ),
-#     ui.include_css(app_dir / "styles.css"),
-#     title="Penguins dashboard",
-#     fillable=True,
-# )
-
-
-# def server(input, output, session):
-#     @reactive.calc
-#     def filtered_df():
-#         filt_df = df[df["species"].isin(input.species())]
-#         filt_df = filt_df.loc[filt_df["body_mass_g"] < input.mass()]
-#         return filt_df
-
-#     @render.text
-#     def count():
-#         return filtered_df().shape[0]
-
-#     @render.text
-#     def bill_length():
-#         return f"{filtered_df()['bill_length_mm'].mean():.1f} mm"
-
-#     @render.text
-#     def bill_depth():
-#         return f"{filtered_df()['bill_depth_mm'].mean():.1f} mm"
-
-#     @render.plot
-#     def length_depth():
-#         return sns.scatterplot(
-#             data=filtered_df(),
-#             x="bill_length_mm",
-#             y="bill_depth_mm",
-#             hue="species",
-#         )
-
-#     @render.data_frame
-#     def summary_statistics():
-#         cols = [
-#             "species",
-#             "island",
-#             "bill_length_mm",
-#             "bill_depth_mm",
-#             "body_mass_g",
-#         ]
-#         return render.DataGrid(filtered_df()[cols], filters=True)

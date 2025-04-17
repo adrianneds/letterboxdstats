@@ -253,6 +253,20 @@ body {
 
 /* ratings section */
 
+.rating-plot {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.bar-graphs {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 .rating-section {
     display: flex;
     flex-direction: row;

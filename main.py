@@ -133,10 +133,16 @@ def summary(df):
 
     # create df with no duplicates
     df_unique = df.drop_duplicates('id')
+    df_unique = df_unique.reset_index()
 
     # film details
     fdetails = getFilmDetails(df_unique)
-    print(fdetails)
+    ratingVsAvgRating = pd.DataFrame({'averageRating':fdetails['averageRating'], 'film_rating':df_unique['film_rating'], 'film_name':df_unique['film_name']})
+    ratingVsAvgRating = ratingVsAvgRating[pd.to_numeric(ratingVsAvgRating['film_rating'], errors='coerce').notnull()]
+    print(ratingVsAvgRating)
+
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    #     print(ratingVsAvgRating)
 
     # rating mean, min, max
     rating = {
@@ -196,10 +202,10 @@ def summary(df):
     most_rewatched_id = df.id.mode()[0]
     print( df.query('id == @most_rewatched_id').iloc[[0]]['film_name'] )
 
-    filmd_df = getFilmDetails(df_unique)
+    # filmd_df = getFilmDetails(df_unique)
 
     # top 5 genres
-    genre_counts = filmd_df.iloc[:,0].to_list()
+    genre_counts = fdetails.iloc[:,0].to_list()
     genre_df = pd.DataFrame(flatten2D(genre_counts))
     genre_df = pd.DataFrame(genre_df.groupby([0]).size())
     genre_df.columns = ['count']
@@ -208,30 +214,37 @@ def summary(df):
     print(gcounts)
 
     # top 5 directors
-    director_counts = filmd_df.iloc[:,1].to_list()
+    director_counts = fdetails.iloc[:,1].to_list()
     dir_df = pd.DataFrame(flatten2D(director_counts))
     dir_df = pd.DataFrame(dir_df.groupby([0]).size())
     dir_df.columns = ['count']
     print("========== TOP 5 DIRECTORS ==========")
     dcounts = dir_df.sort_values(by='count', ascending=False).head(5)
+    dcounts = dcounts.reset_index()
+    dcounts.columns = ["Director", "No. of Films Watched"]
     print(dcounts)
 
     # top 5 actors
-    actor_counts = filmd_df.iloc[:,2].to_list()
+    actor_counts = fdetails.iloc[:,2].to_list()
     act_df = pd.DataFrame(flatten2D(actor_counts))
     act_df = pd.DataFrame(act_df.groupby([0]).size())
     act_df.columns = ['count']
+    
     print("========== TOP 5 ACTORS ==========")
     acounts = act_df.sort_values(by='count', ascending=False).head(5)
     print(acounts)
+    acounts = acounts.reset_index()
+    acounts.columns = ["Actor", "No. of Films Watched"]
+    print(acounts)
 
     # average movie rating
-    df_unique['ave_rating'] = filmd_df['averageRating']
+    df_unique['ave_rating'] = fdetails['averageRating']
     print(df_unique)
 
     # output
     output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_join_df,
-              'watch_freq': watch_freq_lis, 'review_counts':review_df};
+              'watch_freq': watch_freq_lis, 'review_counts':review_df,
+              'ratingVsAvgRating':ratingVsAvgRating, 'mostDirectors':dcounts, 'mostActors':acounts};
 
     return output
 
@@ -259,7 +272,7 @@ def getReview(film_details, index):
     return review
 
 def getFilmDetails(df):
-    url_list = df.iloc[:,7].to_list()
+    url_list = df.iloc[:,8].to_list()
     executor = ThreadPoolExecutor(50)
     results = executor.map(init_soup, url_list)
     d_list2d = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup), 'averageRating': getAveRating(soup)} for soup in results ]
@@ -284,7 +297,7 @@ def getActors(soup):
 def getAveRating(soup):
     aveRating_find = soup.find_all('meta', attrs={'name':'twitter:data2'})
     if(aveRating_find is not None):
-        aveRating = float(aveRating_find[0]['content'][:3])
+        aveRating = float(aveRating_find[0]['content'][:4])
         return aveRating
     else:
         return None
@@ -293,7 +306,7 @@ def flatten2D(lis):
     flat_lis = [x for l in lis for x in l]
     return(flat_lis)
     
-#print(main("essi_17"))
+# print(main("essi_17"))
 
 #print(getMostPopularReview('sberrymilky'))
 #print(getMostPopularReview('essi_17'))
