@@ -83,20 +83,32 @@ app_ui = ui.div(
         ui.div(
             ui.output_text_verbatim("popularReviewHeader1"), 
             ui.output_text_verbatim("popularReview1"),    # contains review
-            ui.output_text_verbatim("userNameReview1"),   
-            ui.output_text_verbatim("filmTitleReview1"),
-            ui.output_text_verbatim("noLikesReview1"),
+            ui.div(
+                ui.output_text_verbatim("userNameReview1"),   
+                ui.output_text_verbatim("filmTitleReview1"),
+                ui.output_text_verbatim("noLikesReview1"),
+                class_="review-details"
+            ),
             class_="review-subsection"
         ),
         ui.div(
             ui.output_text_verbatim("popularReviewHeader2"), 
             ui.output_text_verbatim("popularReview2"),   # contains review
-            ui.output_text_verbatim("userNameReview2"),   
-            ui.output_text_verbatim("filmTitleReview2"),
-            ui.output_text_verbatim("noLikesReview2"),
+            ui.div(
+                ui.output_text_verbatim("userNameReview2"),   
+                ui.output_text_verbatim("filmTitleReview2"),
+                ui.output_text_verbatim("noLikesReview2"),
+                class_="review-details"
+            ),
             class_="review-subsection"
         ),
         ui.div(
+            # outputs pie chart for reviewed/not
+            ui.div(
+                ui.h1("Films Reviewed", id="films-reviewed-header-text"),
+                ui.img(src="speech-bubble.png", id="speech-bubble-icon"),
+                class_="films-reviewed-header"
+            ),
             output_widget("reviewPie"),
             class_="review-subsection"
         ),
@@ -209,7 +221,11 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
-            return str(new_reviews['mostPop'][1])
+            r = "\"" + str(new_reviews['mostPop'][1]) + "\""
+            if (len(r) >= 55):
+                return r[:52] + "..." + "\""
+            else:
+                return r
         
     @render.text
     def popularReview2():
@@ -217,7 +233,11 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
-            return str(new_reviews['mostPop2'][1])
+            r = "\"" + str(new_reviews['mostPop2'][1]) + "\""
+            if (len(r) >= 55):
+                return r[:52] + "..." + "\""
+            else:
+                return r
         
     @render.text
     def filmTitleReview1():
@@ -241,7 +261,7 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
-            return str(new_reviews['mostPop'][2]) + " likes"
+            return str(new_reviews['mostPop'][2]) + " likes ❤︎ "
         
     @render.text
     def noLikesReview2():
@@ -249,7 +269,7 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
-            return str(new_reviews['mostPop2'][2]) + " likes"
+            return str(new_reviews['mostPop2'][2]) + " likes ❤︎ "
         
     @render.text
     def userNameReview1():
@@ -257,7 +277,7 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
-            return "——————" + str(input.inputuser())
+            return "—— @" + str(input.inputuser())
         
     @render.text
     def userNameReview2():
@@ -265,8 +285,22 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
-            return "——————" + str(input.inputuser())
-    
+            return "—— @" + str(input.inputuser())
+        
+    @render_widget
+    def reviewPie():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            fig = px.pie(new_stats['review_counts'], values="count", names="reviewed", color="reviewed", 
+                         color_discrete_map={'Reviewed':'#fc7f01','Not Reviewed':'#ffbf7f'},
+                         width=400, height=400)
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            })
+            return fig
     return
 
 app = App(app_ui, server, static_assets=www_dir, debug=False)

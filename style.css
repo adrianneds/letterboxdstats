@@ -177,6 +177,78 @@ body {
     height: 70px;
 }
 
+/* review section */
+.review-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #e7e9eb;
+    width: 100%;
+    height: 100%;
+}
+
+.review-subsection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#popularReviewHeader1, #popularReviewHeader2, #films-reviewed-header-text {
+    font-family: Akzidenz;
+    color:#fc7f01;
+    font-size: 25px;
+}
+
+#noLikesReview1, #noLikesReview2 {
+    font-family: Akzidenz;
+    color:#fc7f01;
+    font-size: 18px;
+}
+
+#userNameReview1, #userNameReview2, #filmTitleReview1, #filmTitleReview2 {
+    margin: 0 0 0 0;
+    font-family: AkzidenzLight;
+    color: black;
+    font-size: 18px;
+}
+
+#popularReview1, #popularReview2 {
+    font-family: CooperItalic;
+    color: black;
+    font-size: 55px;
+    text-wrap: balance;
+    word-wrap: break-word;
+    text-align: center;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    line-height: 56px;
+}
+
+.review-details {
+    direction: flex;
+    flex-direction: column;
+    row-gap: 1px;
+    justify-content: center;
+    align-items: center;
+}
+
+.films-reviewed-header {
+    margin-bottom:0px;
+    margin-top:10px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 0px;
+    justify-content: center;
+    align-items: center;
+}
+
+#speech-bubble-icon {
+    width: 45px;
+    height: 35px;
+}
+
 .container2{
     background-color: #660033;
     color: white;

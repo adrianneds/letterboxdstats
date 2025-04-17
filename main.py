@@ -98,9 +98,9 @@ def getLikeReview(entry):
     review = False
     review_data = entry.find('td', class_='td-review').find('a')
     if review_data is not None:
-        review = True
+        review = "Reviewed"
     else:
-        review = False
+        review = "Not Reviewed"
 
     return [liked, review]
 
@@ -183,8 +183,10 @@ def summary(df):
 
     # reviewed counts
     review_df = pd.DataFrame(df_unique.groupby(['reviewed']).size())
-    review_df.columns=["count"]
-    print("..and reviewed " + str( round( (review_df.at[1,"count"]/ review_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
+    review_df = review_df.reset_index()
+    review_df.columns=["reviewed", "count"]
+    print(review_df)
+    #print("..and reviewed " + str( round( (review_df.at[1,"count"]/ review_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
 
     # most rewatched
     most_rewatched_id = df.id.mode()[0]
@@ -225,7 +227,7 @@ def summary(df):
 
     # output
     output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_join_df,
-              'watch_freq': watch_freq_lis};
+              'watch_freq': watch_freq_lis, 'review_counts':review_df};
 
     return output
 
@@ -237,11 +239,11 @@ def getMostPopularReview(username):
         return None
     else:
         if (len(film_details) == 2 or len(film_details) == 3):
-            return { 'status': 'Recent Review', 'mostPop': getReview(film_details, 0), 'mostPop2': getReview(film_details, 1) }
+            return { 'status': 'Recent Review ❤︎ ', 'mostPop': getReview(film_details, 0), 'mostPop2': getReview(film_details, 1) }
         if (len(film_details)== 1):
-            return { 'status': 'Popular Review', 'mostPop': getReview(film_details, 0), 'mostPop2': None} # most recent if no popular reviews
+            return { 'status': 'Popular Review ❤︎ ', 'mostPop': getReview(film_details, 0), 'mostPop2': None} # most recent if no popular reviews
         if (len(film_details) == 4):
-            return { 'status': 'Popular Review', 'mostPop':getReview(film_details, 2), 'mostPop2':getReview(film_details, 3) }
+            return { 'status': 'Popular Review ❤︎ ', 'mostPop':getReview(film_details, 2), 'mostPop2':getReview(film_details, 3) }
     
 def getReview(film_details, index):
     review = film_details[index]
@@ -290,4 +292,4 @@ def flatten2D(lis):
 #print(main("essi_17"))
 
 #print(getMostPopularReview('sberrymilky'))
-print(getMostPopularReview('essi_17'))
+#print(getMostPopularReview('essi_17'))
