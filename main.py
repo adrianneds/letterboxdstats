@@ -229,7 +229,27 @@ def summary(df):
 
     return output
 
-
+def getMostPopularReview(username):
+    url = "https://letterboxd.com/" + username + "/"
+    soup = init_soup(url)
+    film_details = soup.find_all('div', class_="film-detail-content")
+    if (film_details is None):
+        return None
+    else:
+        mostPopular = film_details[2]
+        mostPopularReview = [
+            mostPopular.find('h2', class_="headline-2").text,   # title
+            mostPopular.find('div', class_="body-text").find('p').text, # revie w
+            mostPopular.find('p', class_='like-link-target')['data-count'] # no of likes
+        ]
+        if (len(film_details) == 4):
+            mostPopular2 = film_details[3]
+            mostPopularReview2 = [
+                mostPopular2.find('h2', class_="headline-2").text,   # title
+                mostPopular2.find('div', class_="body-text").find('p').text, # revie w
+                mostPopular2.find('p', class_='like-link-target')['data-count'] # no of likes
+            ]
+        return { 'mostPop':mostPopularReview, 'mostPop2':mostPopularReview2 }
 
 def getFilmDetails(df):
     url_list = df.iloc[:,7].to_list()
@@ -267,3 +287,5 @@ def flatten2D(lis):
     return(flat_lis)
     
 #print(main("essi_17"))
+
+print(getMostPopularReview('sberrymilky'))

@@ -27,47 +27,89 @@ app_ui = ui.div(
     ui.div(
         ui.div(
             ui.div(
-                ui.p("You have logged", class_="nofilms_header"),
+                # number of films logged
+                ui.p("You have logged", class_="nofilms_header"), 
                 ui.output_text_verbatim("result"),
                 ui.p("films", class_="nofilms_header"),
                 class_="nofilms_header_container"
             ),
             ui.div(
+                # line graph for watch frequency over time
                 output_widget("line1"),
                 class_="line-container"
             ),
             class_="data-subcontainer"
         ),
         ui.div(
+            # most watches 
             ui.p("Most Watches*", class_="watches-header"),
             ui.div(
                 ui.div(
-                    ui.output_text_verbatim("mostWatchesCount"),
-                    class_="green-box"
+                    ui.div(
+                        ui.output_text_verbatim("mostWatchesCount"),
+                        class_="green-box"
                     ),
+                    ui.p("films", class_="films-label"),
+                    class_="watches-count-container"
+                ),
                 ui.output_text_verbatim("mostWatches"),
                 class_="watches-container"
                 ),
 
+            # least watches
             ui.p("Least Watches*", class_="watches-header"),
             ui.div(
                 ui.div(
-                    ui.output_text_verbatim("leastWatchesCount"),
-                    class_="green-box"
+                    ui.div(
+                        ui.output_text_verbatim("leastWatchesCount"),
+                        class_="green-box"
                     ),
+                    ui.p("films", class_="films-label"),
+                    class_="watches-count-container"
+                ),
                 ui.output_text_verbatim("leastWatches"),
                 class_="watches-container"
                 ),
 
             ui.p("most recent watches > 0", class_="desc"),
-
+            ui.img(src="film.png", id="film-img"),
             class_="data-subcontainer2"
         ),
         class_= "data-container"
     ),
 
+    # rev.iew section
+    ui.div(
+        ui.div(
+            ui.h1("Popular Review", class_="popular-review-header"), 
+            ui.output_text_verbatim("popularReview1"),    # contains review
+            ui.output_text_verbatim("userNameReview"),   
+            ui.output_text_verbatim("filmTitleReview1"),
+            ui.output_text_verbatim("noLikesReview"),
+            class_="review-subsection"
+        ),
+        ui.div(
+            ui.h1("Popular Review", class_="popular-review-header"),
+            ui.output_text_verbatim("popularReview2"),   # contains review
+            ui.output_text_verbatim("userNameReview"),   
+            ui.output_text_verbatim("filmTitleReview2"),
+            ui.output_text_verbatim("noLikesReview"),
+            class_="review-subsection"
+        ),
+        ui.div(
+
+            output_widget("review-pie"),
+            class_="review-subsection"
+        ),
+
+        class_="review-section"
+    ),
+
     # other properties for main container
-    ui.tags.style("@font-face { font-family: Akzidenz; src: url(Akzidenz-grotesk-bold.woff); }"),
+    ui.tags.style("@font-face { font-family: Akzidenz; src: url(Akzidenz-grotesk-bold.woff); } "
+    "@font-face { font-family: AkzidenzLight; src: url(Akzidenz-grotesk-ce-light.woff); }" 
+    "@font-face { font-family: CooperItalic; src: url(CooperLtBT-Italic.woff) }"),
+
     ui.tags.style(".data-container { background-image: url(purp-bg.png); }"),
     ui.include_css(app_dir / "style.css"),
     class_ = "main-container"
