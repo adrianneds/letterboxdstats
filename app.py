@@ -125,12 +125,12 @@ app_ui = ui.div(
             ),
             ui.div(
                 ui.div(
-                    ui.h1("Most Watched Directors", class_="rating-section-header"),
+                    ui.h1("Most Watched Directors", class_="rating-section-header most"),
                     output_widget("mostDirectors"),
                     class_="most-directors"
                 ),
                 ui.div(
-                    ui.h1("Most Watched Actors", class_="rating-section-header"),
+                    ui.h1("Most Watched Actors", class_="rating-section-header most"),
                     output_widget("mostActors"),
                     class_="most-actors"
                 ),
@@ -379,7 +379,7 @@ def server(input, output, session):
             df = new_stats['mostDirectors']
             fig = px.bar(df, x="No. of Films Watched", y="Director", 
                          orientation='h', color_discrete_sequence=["#40baf1"],
-                         width=400, height=400)
+                         width=450, height=400)
             fig.update_layout(yaxis=dict(autorange="reversed"))
             fig.update_layout({
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -396,7 +396,7 @@ def server(input, output, session):
             df = new_stats['mostActors']
             fig = px.bar(df, x="No. of Films Watched", y="Actor",
                          orientation='h', color_discrete_sequence=["#05de54"],
-                         width=400, height=400)
+                         width=450, height=400)
             fig.update_layout(yaxis=dict(autorange="reversed"))
             fig.update_layout({
             'plot_bgcolor': 'rgba(0, 0, 0, 0)',
@@ -449,8 +449,8 @@ def server(input, output, session):
                     yanchor="bottom",
                     y=-0.2,
                     xanchor="right",
-                    x=0.8), margin=dict(t=0, b=0, l=0, r=0.2), )
-            return 
+                    x=0.8), margin=dict(t=0, b=0, l=0, r=0.2), font_color="white")
+            return fig
         
     return
 
