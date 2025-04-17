@@ -201,8 +201,13 @@ def summary(df):
     #print("..and reviewed " + str( round( (review_df.at[1,"count"]/ review_df["count"].sum())*100 ,2 ) ) + "% of your watched films")
 
     # most rewatched
-    most_rewatched_id = df.id.mode()[0]
-    print( df.query('id == @most_rewatched_id').iloc[[0]]['film_name'] )
+    mode = df.id.mode()
+    most_rewatched_id = mode[0]
+    query = pd.DataFrame(df.query('id == @most_rewatched_id')).reset_index()
+    rewatched = query.at[0,'film_name']
+    rewatchedYear = query.at[0,'release_date']
+    rewatchUrl = query.at[0,'url']
+    rewatchedLis = [ str(rewatched), str(rewatchedYear), str(len(query)), str(getFilmPoster(str(rewatchUrl))) ]
 
     # filmd_df = getFilmDetails(df_unique)
 
@@ -213,6 +218,8 @@ def summary(df):
     genre_df.columns = ['count']
     print("========== TOP 5 GENRES ==========")
     gcounts = genre_df.sort_values(by='count', ascending=False).head(5)
+    gcounts = gcounts.reset_index()
+    gcounts.columns = ["Genre", "No. of Films Watched"]
     print(gcounts)
 
     # top 5 directors
@@ -247,7 +254,7 @@ def summary(df):
     output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_join_df,
               'watch_freq': watch_freq_lis, 'review_counts':review_df,
               'ratingVsAvgRating':ratingVsAvgRating, 'mostDirectors':dcounts, 'mostActors':acounts,
-              'userRatings':ratingLis};
+              'userRatings':ratingLis, 'genre':gcounts, 'rewatch':rewatchedLis };
 
     return output
 
@@ -308,8 +315,14 @@ def getAveRating(soup):
 def flatten2D(lis):
     flat_lis = [x for l in lis for x in l]
     return(flat_lis)
+
+def getFilmPoster(url):
+    soup = init_soup(url)
+    posterUrl = soup.find('script', type="application/ld+json").text[27:].split("\"")[0]
+    posterUrl = posterUrl.split("?")[0]
+    return posterUrl
     
 # print(main("essi_17"))
-
+# print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
 #print(getMostPopularReview('essi_17'))

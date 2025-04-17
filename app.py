@@ -5,6 +5,9 @@ import plotly.express as px
 import pandas as pd
 from main import *
 from shinywidgets import output_widget, render_widget  
+import matplotlib as plt
+import circlify as circlify
+import requests as requests
 
 # Import data from shared.py
 from shared import app_dir, df
@@ -162,21 +165,22 @@ app_ui = ui.div(
     ui.div(
         ui.div(
             ui.h1("Most Watched Genres", class_="genre-rew-header"),
-            output_widget("genreBubble"),
-            class_="genre-bubble"
+            output_widget("genreBar"),
+            class_="genre-bar"
         ),
         ui.div(
             ui.div(
                 ui.h1("Most Rewatched Film", class_="genre-rew-header"),
+                ui.output_text_verbatim("rewatchFilm"),
                 ui.output_text_verbatim("rewatchYear"),
-                ui.img(id="rewatch-icon"),
+                ui.img(src = "rewatch.png", id="rewatch-icon"),
                 ui.div(
                     ui.output_text_verbatim("rewatchTimes"),
                     class_="rewatch-container"
                 ),
                 class_="rewatch-info"
             ),
-            # output img
+            ui.output_ui("rewatchPoster"),
             class_="rewatch-section"
         ),
         class_="genres-rew-section"
@@ -476,6 +480,56 @@ def server(input, output, session):
                     x=0.8), margin=dict(t=0, b=0, l=0, r=0.2), font_color="white")
             return fig
         
-    return
+    @render_widget
+    def genreBar():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            df = new_stats['genre']
+            fig = px.bar(df, x="No. of Films Watched", y="Genre",
+                         orientation='h', color_discrete_sequence=["#fc7f01"],
+                         width=550, height=400)
+            fig.update_layout(yaxis=dict(autorange="reversed"))
+            fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            })
+        return fig
+    
+    @render.text
+    def rewatchFilm():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['rewatch'][0]
+        
+    @render.text
+    def rewatchYear():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['rewatch'][1]
+        
+    @render.text
+    def rewatchTimes():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            return new_stats['rewatch'][2] + "x watched"
+        
+    @render.ui
+    def rewatchPoster():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            url = str(new_stats['rewatch'][3]).strip()
+            #url = requests.get(url)
+            #img = {"src": url, "width": "230px", "height": "345px"}  
+            return ui.tags.img(src=url, width=230, height=345)
 
 app = App(app_ui, server, static_assets=www_dir, debug=False)
