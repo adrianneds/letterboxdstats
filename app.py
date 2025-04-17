@@ -158,6 +158,30 @@ app_ui = ui.div(
         class_="rating-section"
     ),
 
+    # genres and most rewatched
+    ui.div(
+        ui.div(
+            ui.h1("Most Watched Genres", class_="genre-rew-header"),
+            output_widget("genreBubble"),
+            class_="genre-bubble"
+        ),
+        ui.div(
+            ui.div(
+                ui.h1("Most Rewatched Film", class_="genre-rew-header"),
+                ui.output_text_verbatim("rewatchYear"),
+                ui.img(id="rewatch-icon"),
+                ui.div(
+                    ui.output_text_verbatim("rewatchTimes"),
+                    class_="rewatch-container"
+                ),
+                class_="rewatch-info"
+            ),
+            # output img
+            class_="rewatch-section"
+        ),
+        class_="genres-rew-section"
+    ),
+
     # other properties for main container
     ui.tags.style("@font-face { font-family: Akzidenz; src: url(Akzidenz-grotesk-bold.woff); } "
     "@font-face { font-family: AkzidenzLight; src: url(Akzidenz-grotesk-ce-light.woff); }" 
