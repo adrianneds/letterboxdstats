@@ -191,7 +191,10 @@ def summary(df):
     datetime_most = datetime.strptime(most, '%Y-%m-%d').strftime('%b %d %Y')
     datetime_least = datetime.strptime(least, '%Y-%m-%d').strftime('%b %d %Y')
 
-    watch_freq_lis = [datetime_most, datetime_least, str(max['count']), str(min['count'])]
+    most_count = max['count']
+    least_count = min['count']
+
+    watch_freq_lis = [datetime_most, datetime_least, str(most_count), str(least_count)]
 
     # reviewed counts
     review_df = pd.DataFrame(df_unique.groupby(['reviewed']).size())
@@ -209,7 +212,8 @@ def summary(df):
     rewatchUrl = query.at[0,'url']
     if (len(rewatched)> 30):
         rewatched = rewatched[:25] + "..."
-    rewatchedLis = [ rewatched, str(rewatchedYear), str(len(query)), str(getFilmPoster(str(rewatchUrl))) ]
+    rewatchTimes = len(query)
+    rewatchedLis = [ rewatched, str(rewatchedYear), str(rewatchTimes), str(getFilmPoster(str(rewatchUrl))) ]
 
     # filmd_df = getFilmDetails(df_unique)
 
@@ -252,11 +256,28 @@ def summary(df):
     df_unique['ave_rating'] = fdetails['averageRating']
     print(df_unique)
 
+    # achievements
+    achievementLis = [False, False, False, False, False]
+
+    if (ratingLis[0] < 3):
+        achievementLis[0] = True
+    likedPrcnt = (liked_df.at[1,"Count"]/ liked_df["Count"].sum())
+    if (likedPrcnt >= 0.5):
+        achievementLis[1] = True
+    if (rewatchTimes >= 5):
+        achievementLis[2] = True
+    reviewPrcnt = (review_df.at[1,"count"]/ review_df["count"].sum())
+    if (reviewPrcnt >= 0.5):
+        achievementLis[3] = True 
+    if (most_count >= 5):
+        achievementLis[4] = True
+
     # output
     output = { 'nofilms': len(df), 'liked': liked_df, 'watch_counts': date_join_df,
               'watch_freq': watch_freq_lis, 'review_counts':review_df,
               'ratingVsAvgRating':ratingVsAvgRating, 'mostDirectors':dcounts, 'mostActors':acounts,
-              'userRatings':ratingLis, 'genre':gcounts, 'rewatch':rewatchedLis };
+              'userRatings':ratingLis, 'genre':gcounts, 'rewatch':rewatchedLis,
+               'achievements':achievementLis };
 
     return output
 

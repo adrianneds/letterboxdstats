@@ -186,6 +186,29 @@ app_ui = ui.div(
         class_="genres-rew-section"
     ),
 
+    ui.div(
+        ui.div(
+            ui.output_text_verbatim("usernameProfile"),
+            ui.div(
+                class_="achievement"
+            ),
+            ui.div(
+                class_="achievement"
+            ),
+            ui.div(
+                class_="achievement"
+            ),
+            ui.div(
+                class_="achievement"
+            ),
+            ui.div(
+                class_="achievement"
+            ),
+            class_="profile-grid"
+        ),
+        class_="profile-section"
+    ),
+
     # other properties for main container
     ui.tags.style("@font-face { font-family: Akzidenz; src: url(Akzidenz-grotesk-bold.woff); } "
     "@font-face { font-family: AkzidenzLight; src: url(Akzidenz-grotesk-ce-light.woff); }" 
