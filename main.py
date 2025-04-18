@@ -319,6 +319,8 @@ def summary(df):
     return output
 
 def getMostPopularReview(username):
+    if (username[0]=='@'):
+        username = username[1:]
     url = "https://letterboxd.com/" + username + "/"
     soup = init_soup(url)
     film_details = soup.find_all('div', class_="film-detail-content")
