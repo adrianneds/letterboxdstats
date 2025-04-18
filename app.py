@@ -211,7 +211,7 @@ app_ui = ui.div(
             ),
             class_="profile-grid"
         ),
-        ui.h1("github: @adrianneds", class_="credits"),
+        ui.h1("github: @adrianneds", id="credits"),
         class_="profile-section"
     ),
 

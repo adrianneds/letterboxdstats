@@ -22,8 +22,12 @@ def init_soup(url):
 def getUrl(soup):
 
     # other pages
-    pages = soup.find('div', class_='paginate-pages').find_all('a',href=True)
-    url_set = ["https://letterboxd.com" + page['href'] for page in pages]
+    pages = soup.find('div', class_='paginate-pages')
+    if pages is None:
+        return None
+    else:
+        pages = pages.find_all('a',href=True)
+        url_set = ["https://letterboxd.com" + page['href'] for page in pages]
 
     return(url_set)
 
@@ -32,7 +36,11 @@ def main(username):
 
     mainUrl = ["https://letterboxd.com/" + username + "/films/diary/"]
     mainSoup = init_soup(mainUrl[0])
-    url_set = mainUrl + getUrl(mainSoup)
+    url_set = getUrl(mainSoup)
+    if (url_set is None):
+        url_set = mainUrl
+    else:
+        url_set = mainUrl + url_set
 
     data_df = init_dframe()
 
@@ -269,7 +277,9 @@ def summary(df):
         achievementLis[1] = True
     if (rewatchTimes >= 5):
         achievementLis[2] = True
-    review_df = review_df.sort_values('reviewed', ascending=False).reset_index()
+    review_df = review_df.sort_values('reviewed', ascending=False)
+    review_df = review_df.reset_index()
+    print(review_df)
     reviewPrcnt = (review_df.at[0,"count"]/ review_df["count"].sum())
     print(reviewPrcnt)
     if (reviewPrcnt >= 0.5):
@@ -350,6 +360,7 @@ def getFilmPoster(url):
     posterUrl = posterUrl.split("?")[0]
     return posterUrl
     
+print(main("pur1n"))
 # print(main("essi_17"))
 # print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
