@@ -34,6 +34,9 @@ def getUrl(soup):
 # main
 def main(username):
 
+    if (username[0] == "@"):
+        username = username[1:]
+
     mainUrl = ["https://letterboxd.com/" + username + "/films/diary/"]
     mainSoup = init_soup(mainUrl[0])
     url_set = getUrl(mainSoup)
@@ -46,6 +49,8 @@ def main(username):
 
     for url in url_set:
         data_df = diarStats(data_df, url, username)
+        # if (data_df == False):
+        #     return False
     
     print("==================================================================================================================")
     print( username + "'s Letterboxd Diary")
@@ -131,6 +136,8 @@ def diarStats(diary_df, url, username):
                             "release_date": getFilmDiaryDetails(li)[1], "liked":getLikeReview(li)[0],
                             "reviewed":getLikeReview(li)[1], "date": getDate(li), "url": getFilmDiaryDetails(li)[2]} ]) for li in entries]
     diary_page = pd.concat( newRows , ignore_index=True)
+    if ( len(newRows) == 0):
+        return False
     diary_df = pd.concat([diary_df, diary_page], ignore_index=True)
     #genre_df = getFilmDetails(entries)
     diary_df = pd.DataFrame(diary_df)
@@ -297,7 +304,7 @@ def summary(df):
               'watch_freq': watch_freq_lis, 'review_counts':review_df,
               'ratingVsAvgRating':ratingVsAvgRating, 'mostDirectors':dcounts, 'mostActors':acounts,
               'userRatings':ratingLis, 'genre':gcounts, 'rewatch':rewatchedLis,
-               'achievements':achievementLis };
+               'achievements':achievementLis};
 
     return output
 
@@ -374,7 +381,8 @@ def getFilmPoster(url):
     return posterUrl
     
 # print(main("sberrymilky"))
-# print(main("essi_17"))
+# print(main("sdjhdffh"))
 # print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
 #print(getMostPopularReview('essi_17'))
+print(main("@pur1n"))
