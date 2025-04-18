@@ -204,10 +204,12 @@ def summary(df):
     mode = df.id.mode()
     most_rewatched_id = mode[0]
     query = pd.DataFrame(df.query('id == @most_rewatched_id')).reset_index()
-    rewatched = query.at[0,'film_name']
+    rewatched = str(query.at[0,'film_name'])
     rewatchedYear = query.at[0,'release_date']
     rewatchUrl = query.at[0,'url']
-    rewatchedLis = [ str(rewatched), str(rewatchedYear), str(len(query)), str(getFilmPoster(str(rewatchUrl))) ]
+    if (len(rewatched)> 30):
+        rewatched = rewatched[:25] + "..."
+    rewatchedLis = [ rewatched, str(rewatchedYear), str(len(query)), str(getFilmPoster(str(rewatchUrl))) ]
 
     # filmd_df = getFilmDetails(df_unique)
 

@@ -362,7 +362,7 @@ body {
     background-color: #e7e9eb;
 }
 
-.genre-bar, .rewatch-info {
+.genre-bar {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -370,19 +370,39 @@ body {
     background-color: #e7e9eb;
 }
 
+.genre-bar {
+    margin-top: 30px;
+}
+
+.rewatch-info {
+    display: flex;
+    flex-direction: column;
+    background-color: #e7e9eb;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-right: 20px;
+}
+
 .rewatch-section {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;   
+    align-items: center;
+    margin-left: 25px;
 }
 
 #rewatchFilm {
     font-family: CooperItalic;
-    font-size: 40px;
+    font-size: 55px;
     margin-top: 0;
     margin-bottom: 0;
     color: black;
+    text-align: end;
+    text-wrap: balance;
+    word-wrap: break-word;
+    width: 450px;
+    letter-spacing: -1px;
+    line-height: 80%;
 }
 
 #rewatch-icon {
@@ -392,9 +412,9 @@ body {
 
 #rewatchYear {
     font-family: AkzidenzLight;
-    font-size: 15px;
+    font-size: 25px;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 30;
     color: black;
 }
 
@@ -402,12 +422,22 @@ body {
     font-family: Akzidenz;
     font-size: 25px;
     color: white;
+    margin: 0 0 0 0;
 }
 
 .genre-rew-header {
     font-family: Akzidenz;
     color: black;
     font-size: 25px;
+}
+
+.rewatch-container {
+    background-color: #fc7f01;
+    padding-left: 8px;
+    padding-right: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .section{
