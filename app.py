@@ -10,6 +10,10 @@ js_file = Path(__file__).parent / "www" / "script.js"
 
 app_ui = ui.div(
 
+    ui.tags.head(
+        ui.tags.title("Letterboxd Diary Stats"),
+    ),
+
     # input field
     ui.div(
         ui.p("Enter your Letterboxd username", class_="input-header"),
