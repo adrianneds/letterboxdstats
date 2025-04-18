@@ -270,8 +270,8 @@ def summary(df):
 
     if (ratingLis[0] < 3):
         achievementLis[0] = True
-    if 'Liked' in liked_df.values :
-        likedQuery = pd.DataFrame(liked_df.query('Liked == Liked')).reset_index()
+    if 'Liked' in liked_df['Liked'].values :
+        likedQuery = pd.DataFrame(liked_df.query("Liked == 'Liked'")).reset_index()
         likedPrcnt = ( likedQuery.at[0, "Count"]  / liked_df["Count"].sum())
     else: 
         likedPrcnt = 0;
@@ -280,8 +280,9 @@ def summary(df):
         achievementLis[1] = True
     if (rewatchTimes >= 5):
         achievementLis[2] = True
-    if 'Reviewed' in review_df.values :
-        reviewedQuery = pd.DataFrame(review_df.query('reviewed == Reviewed')).reset_index()
+    print(review_df['reviewed'].values)
+    if 'Reviewed' in review_df['reviewed'].values :
+        reviewedQuery = pd.DataFrame(review_df.query("reviewed == 'Reviewed'")).reset_index()
         reviewPrcnt = (reviewedQuery.at[0,"count"]/ review_df["count"].sum())
     else:
         reviewPrcnt = 0;
@@ -337,18 +338,26 @@ def getGenres(soup):
     return(genresList)
 
 def getDirector(soup):
-    directors = soup.find('div', id='tab-crew').find('div', class_='text-sluglist').find_all('a')[:5]
-    directorList = [  d.text for d in directors ]
-    return directorList
+    directors_find = soup.find('div', id='tab-crew')
+    if (directors_find is not None):
+        directors = directors_find.find('div', class_='text-sluglist').find_all('a')[:5]
+        directorList = [  d.text for d in directors ]
+        return directorList
+    else:
+        return [""]
 
 def getActors(soup):
-    actors = soup.find('div', class_='cast-list text-sluglist').find_all('a')[:5]
-    actorsList = [  a.text for a in actors ]
-    return actorsList
+    actors_find = soup.find('div', class_='cast-list text-sluglist')
+    if (actors_find is not None):
+        actors = actors_find.find_all('a')[:5]
+        actorsList = [  a.text for a in actors ]
+        return actorsList
+    else:
+        return [""]
 
 def getAveRating(soup):
     aveRating_find = soup.find_all('meta', attrs={'name':'twitter:data2'})
-    if(aveRating_find is not None):
+    if(len(aveRating_find) > 0):
         aveRating = float(aveRating_find[0]['content'][:4])
         return aveRating
     else:
@@ -364,7 +373,7 @@ def getFilmPoster(url):
     posterUrl = posterUrl.split("?")[0]
     return posterUrl
     
-print(main("pur1n"))
+print(main("sberrymilky"))
 # print(main("essi_17"))
 # print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
