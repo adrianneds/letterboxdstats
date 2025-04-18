@@ -49,8 +49,8 @@ def main(username):
 
     for url in url_set:
         data_df = diarStats(data_df, url, username)
-        # if (data_df == False):
-        #     return False
+        if (len(data_df) == 0):
+            return data_df
     
     print("==================================================================================================================")
     print( username + "'s Letterboxd Diary")
@@ -135,9 +135,10 @@ def diarStats(diary_df, url, username):
     newRows = [pd.DataFrame([ {'id':getId(li), 'film_name': getFilmDiaryDetails(li)[0], 'film_rating': getRating(li),
                             "release_date": getFilmDiaryDetails(li)[1], "liked":getLikeReview(li)[0],
                             "reviewed":getLikeReview(li)[1], "date": getDate(li), "url": getFilmDiaryDetails(li)[2]} ]) for li in entries]
-    diary_page = pd.concat( newRows , ignore_index=True)
+    print(len(newRows))
     if ( len(newRows) == 0):
-        return False
+        return pd.DataFrame()
+    diary_page = pd.concat( newRows , ignore_index=True)
     diary_df = pd.concat([diary_df, diary_page], ignore_index=True)
     #genre_df = getFilmDetails(entries)
     diary_df = pd.DataFrame(diary_df)
@@ -381,8 +382,8 @@ def getFilmPoster(url):
     return posterUrl
     
 # print(main("sberrymilky"))
-# print(main("sdjhdffh"))
+print(main("sdjhdffh"))
 # print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
 #print(getMostPopularReview('essi_17'))
-print(main("@pur1n"))
+# print(main("@pur1n"))

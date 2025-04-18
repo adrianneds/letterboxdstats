@@ -60,6 +60,10 @@ body {
     transition: 0.3s;
 }
 
+#errorMsg {
+    font-family: AkzidenzLight;
+}
+
 /* section 1: watch frequencies */
 .data-container {
     display: flex;

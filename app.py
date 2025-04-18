@@ -24,6 +24,7 @@ app_ui = ui.div(
         ui.p("Enter your Letterboxd username", class_="input-header"),
         ui.input_text(id="inputuser", label="",value="@useruser"),
         ui.input_action_button("submit", "submit", onClick = "observeDiv()"),
+        ui.output_text_verbatim("errorMsg"),
         class_ = "container"
     ),
 
@@ -255,17 +256,32 @@ def server(input, output, session):
     def submit():
         username = input.inputuser()
         new_stats = main(username)
-        user_stats.set(new_stats)
-        new_review = getMostPopularReview(username)
-        user_reviews.set(new_review)
-        return
-
+        if (len(new_stats) == 0):
+            user_stats.set(0)
+            user_reviews.set(0)
+            return
+        else:
+            user_stats.set(new_stats)
+            new_review = getMostPopularReview(username)
+            user_reviews.set(new_review)
+            return
+        
+    @render.text
+    def errorMsg():
+        new_stats = user_stats.get()
+        if (new_stats == 0):
+            return "Username not found."
+        else:
+            return None
+            
     @render.text
     def result():
         new_stats = user_stats.get()
         if (new_stats is None):
             return None
         else:
+            if (new_stats == 0):
+                return None
             return str(new_stats['nofilms'])
     
     @render_widget
@@ -274,6 +290,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             df = new_stats['watch_counts']
             fig = px.line(df, x='date', y='count')
             fig.update_traces(line_color='#fc7f01')
@@ -291,6 +309,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['watch_freq'][0]
         
     @render.text
@@ -299,6 +319,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['watch_freq'][1]
         
     @render.text
@@ -307,6 +329,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['watch_freq'][2]
         
     @render.text
@@ -315,6 +339,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['watch_freq'][3]
         
     # for reviews
@@ -324,6 +350,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return str(new_reviews['status'])
 
     @render.text
@@ -332,6 +360,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return str(new_reviews['status'])
 
     @render.text
@@ -340,6 +370,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             r = "\"" + str(new_reviews['mostPop'][1]) + "\""
             if (len(r) >= 60):
                 return r[:58] + "..." + "\""
@@ -352,6 +384,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             r = "\"" + str(new_reviews['mostPop2'][1]) + "\""
             if (len(r) >= 60):
                 return r[:58] + "..." + "\""
@@ -364,6 +398,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return "on " + str(new_reviews['mostPop'][0])
         
     @render.text
@@ -372,6 +408,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return "on " + str(new_reviews['mostPop2'][0])
         
     @render.text
@@ -380,6 +418,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return str(new_reviews['mostPop'][2]) + " likes ❤︎ "
         
     @render.text
@@ -388,6 +428,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return str(new_reviews['mostPop2'][2]) + " likes ❤︎ "
         
     @render.text
@@ -396,6 +438,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return "—— @" + str(input.inputuser())
         
     @render.text
@@ -404,6 +448,8 @@ def server(input, output, session):
         if new_reviews is None:
             return None
         else:
+            if (new_reviews == 0):
+                return None
             return "—— @" + str(input.inputuser())
         
     @render_widget
@@ -412,6 +458,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             fig = px.pie(new_stats['review_counts'], values="count", names="reviewed", color="reviewed", 
                          color_discrete_map={'Reviewed':'#fc7f01','Not Reviewed':'#ffbf7f'},
                          width=400, height=400)
@@ -432,6 +480,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             df = new_stats['ratingVsAvgRating']
             fig = px.strip(df, x='Your Rating', y='Average Rating', color="Your Rating", hover_data=['Film Name'], width=900,height=400,
                              color_discrete_map={ 0:"#d9eee1", 0.5: "#d9eee1", 1: "#bee8cd", 1.5: "#bee8cd",
@@ -453,6 +503,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             df = new_stats['mostDirectors']
             fig = px.bar(df, x="No. of Films Watched", y="Director", 
                          orientation='h', color_discrete_sequence=["#40baf1"],
@@ -470,6 +522,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             df = new_stats['mostActors']
             fig = px.bar(df, x="No. of Films Watched", y="Actor",
                          orientation='h', color_discrete_sequence=["#05de54"],
@@ -487,6 +541,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             min = new_stats['userRatings'][2]
             return str(min) + "★"
         
@@ -496,6 +552,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             max = new_stats['userRatings'][1]
             return str(max) + "★"
         
@@ -505,6 +563,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             ave = new_stats['userRatings'][0]
             return str(ave) + "★"
         
@@ -514,6 +574,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             df = new_stats['liked']
             fig = px.pie(df, values="Count", names="Liked", color="Liked", 
                 color_discrete_map={'Liked':'#fc7f01','Not Liked':'#ffbf7f'},
@@ -535,6 +597,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             df = new_stats['genre']
             fig = px.bar(df, x="No. of Films Watched", y="Genre",
                          orientation='h', color_discrete_sequence=["#fc7f01"],
@@ -552,6 +616,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['rewatch'][0]
         
     @render.text
@@ -560,6 +626,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['rewatch'][1]
         
     @render.text
@@ -568,6 +636,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             return new_stats['rewatch'][2] + "x watched"
         
     @render.ui
@@ -576,6 +646,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             url = str(new_stats['rewatch'][3]).strip()
             #url = requests.get(url)
             #img = {"src": url, "width": "230px", "height": "345px"}  
@@ -583,7 +655,11 @@ def server(input, output, session):
         
     @render.text
     def usernameProfile():
-        return str(input.inputuser()) + "'s Watch Profile";
+        new_stats = user_stats.get()
+        if new_stats != 0:
+            return str(input.inputuser()) + "'s Watch Profile";
+        else:
+            return None
 
     @render.ui
     def achievement1():
@@ -591,6 +667,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             ac1 = new_stats['achievements'][0]
             if (ac1):
                 img = ui.tags.img(src = "achievement1_true.png", width= 100, height=110, class_="achievement-img")
@@ -610,6 +688,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             ac1 = new_stats['achievements'][1]
             if (ac1):
                 img = ui.tags.img(src = "achievement2_true.png", width= 100, height=110, class_="achievement-img")
@@ -629,6 +709,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             ac1 = new_stats['achievements'][2]
             if (ac1):
                 img = ui.tags.img(src = "achievement3_true.png", width= 100, height=110, class_="achievement-img")
@@ -648,6 +730,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             ac1 = new_stats['achievements'][3]
             if (ac1):
                 img = ui.tags.img(src = "achievement4_true.png", width= 100, height=110, class_="achievement-img")
@@ -667,6 +751,8 @@ def server(input, output, session):
         if new_stats is None:
             return None
         else:
+            if (new_stats == 0):
+                return None
             ac1 = new_stats['achievements'][4]
             if (ac1):
                 img = ui.tags.img(src = "achievement5_true.png", width= 100, height=110, class_="achievement-img")
