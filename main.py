@@ -34,8 +34,9 @@ def getUrl(soup):
 # main
 def main(username):
 
-    if (username[0] == "@"):
-        username = username[1:]
+    if (len(username)>0):
+        if (username[0] == "@"):
+            username = username[1:]
 
     mainUrl = ["https://letterboxd.com/" + username + "/films/diary/"]
     mainSoup = init_soup(mainUrl[0])
