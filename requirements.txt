@@ -6,5 +6,3 @@ shinywidgets
 bs4
 requests
 datetime
-concurrent.futures
-datetime

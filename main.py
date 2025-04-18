@@ -345,6 +345,7 @@ def getFilmDetails(df):
     url_list = df.iloc[:,8].to_list()
     executor = ThreadPoolExecutor(50)
     results = executor.map(init_soup, url_list)
+    # results = [init_soup(u) for u in url_list]
     d_list2d = [ {'genres': getGenres(soup), 'directors':getDirector(soup), 'actors':getActors(soup), 'averageRating': getAveRating(soup)} for soup in results ]
     d_df = pd.DataFrame(d_list2d)
     return d_df
@@ -400,3 +401,4 @@ def getFilmPoster(url):
 #print(getMostPopularReview('sberrymilky'))
 #print(getMostPopularReview('essi_17'))
 # print(main("@pur1n"))
+# print(main("essi_17"))
