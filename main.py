@@ -270,17 +270,21 @@ def summary(df):
 
     if (ratingLis[0] < 3):
         achievementLis[0] = True
-    liked_df = liked_df.sort_values('Liked', ascending=True).reset_index()
-    likedPrcnt = ( liked_df.at[0, "Count"]  / liked_df["Count"].sum())
+    if 'Liked' in liked_df.values :
+        likedQuery = pd.DataFrame(liked_df.query('Liked == Liked')).reset_index()
+        likedPrcnt = ( likedQuery.at[0, "Count"]  / liked_df["Count"].sum())
+    else: 
+        likedPrcnt = 0;
     print(likedPrcnt)
     if (likedPrcnt >= 0.5):
         achievementLis[1] = True
     if (rewatchTimes >= 5):
         achievementLis[2] = True
-    review_df = review_df.sort_values('reviewed', ascending=False)
-    review_df = review_df.reset_index()
-    print(review_df)
-    reviewPrcnt = (review_df.at[0,"count"]/ review_df["count"].sum())
+    if 'Reviewed' in review_df.values :
+        reviewedQuery = pd.DataFrame(review_df.query('reviewed == Reviewed')).reset_index()
+        reviewPrcnt = (reviewedQuery.at[0,"count"]/ review_df["count"].sum())
+    else:
+        reviewPrcnt = 0;
     print(reviewPrcnt)
     if (reviewPrcnt >= 0.5):
         achievementLis[3] = True 
