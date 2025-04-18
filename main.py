@@ -182,8 +182,9 @@ def summary(df):
     #     print(date_join_df)
 
     # most , least watches
-    max = date_df.loc[date_df['count'].idxmax()]
-    min = date_df.loc[date_df['count'].idxmin(skipna=True)]
+    sorted_date_df = date_df.sort_values('date', ascending=False).reset_index()
+    max = sorted_date_df.loc[sorted_date_df['count'].idxmax()]
+    min = sorted_date_df.loc[sorted_date_df['count'].idxmin(skipna=True)]
 
     most = str(max['date'])
     least = str(min['date'])
@@ -261,12 +262,16 @@ def summary(df):
 
     if (ratingLis[0] < 3):
         achievementLis[0] = True
-    likedPrcnt = (liked_df.at[1,"Count"]/ liked_df["Count"].sum())
+    liked_df = liked_df.sort_values('Liked', ascending=True).reset_index()
+    likedPrcnt = ( liked_df.at[0, "Count"]  / liked_df["Count"].sum())
+    print(likedPrcnt)
     if (likedPrcnt >= 0.5):
         achievementLis[1] = True
     if (rewatchTimes >= 5):
         achievementLis[2] = True
-    reviewPrcnt = (review_df.at[1,"count"]/ review_df["count"].sum())
+    review_df = review_df.sort_values('reviewed', ascending=False).reset_index()
+    reviewPrcnt = (review_df.at[0,"count"]/ review_df["count"].sum())
+    print(reviewPrcnt)
     if (reviewPrcnt >= 0.5):
         achievementLis[3] = True 
     if (most_count >= 5):

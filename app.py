@@ -187,25 +187,31 @@ app_ui = ui.div(
     ),
 
     ui.div(
+        ui.output_text_verbatim("usernameProfile"),
         ui.div(
-            ui.output_text_verbatim("usernameProfile"),
             ui.div(
+                ui.output_ui("achievement1"),
                 class_="achievement"
             ),
             ui.div(
+                ui.output_ui("achievement2"),
                 class_="achievement"
             ),
             ui.div(
+                ui.output_ui("achievement3"),
                 class_="achievement"
             ),
             ui.div(
+                ui.output_ui("achievement4"),
                 class_="achievement"
             ),
             ui.div(
+                ui.output_ui("achievement5"),
                 class_="achievement"
             ),
             class_="profile-grid"
         ),
+        ui.h1("github: @adrianneds", class_="credits"),
         class_="profile-section"
     ),
 
@@ -214,7 +220,7 @@ app_ui = ui.div(
     "@font-face { font-family: AkzidenzLight; src: url(Akzidenz-grotesk-ce-light.woff); }" 
     "@font-face { font-family: CooperItalic; src: url(CooperLtBT-Italic.woff) }"),
 
-    ui.tags.style(".data-container, .rating-section { background-image: url(purp-bg.png); }"),
+    ui.tags.style(".data-container, .rating-section, .profile-section { background-image: url(purp-bg.png); }"),
     ui.include_css(app_dir / "style.css"),
     class_ = "main-container"
 )
@@ -554,5 +560,104 @@ def server(input, output, session):
             #url = requests.get(url)
             #img = {"src": url, "width": "230px", "height": "345px"}  
             return ui.tags.img(src=url, width=230, height=345)
+        
+    @render.text
+    def usernameProfile():
+        return str(input.inputuser()) + "'s Watch Profile";
+
+    @render.ui
+    def achievement1():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            ac1 = new_stats['achievements'][0]
+            if (ac1):
+                img = ui.tags.img(src = "achievement1_true.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement2-header, #achievement2-desc { color: #e7e9eb }" )
+            else:
+                img = ui.tags.img(src = "achievement1_false.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement1-header, #achievement1-desc { color: #585858 }" )
+            header = ui.tags.h2("No Hard Feelings", id="achievement1-header")
+            desc = ui.tags.p("average rating below 3", id="achievement1-desc")
+            info_container = ui.tags.div(header, desc, class_="info-container")
+            container = ui.tags.div(img, info_container, styles, class_="achievement-container")
+            return container
+        
+    @render.ui
+    def achievement2():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            ac1 = new_stats['achievements'][1]
+            if (ac1):
+                img = ui.tags.img(src = "achievement2_true.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement2-header, #achievement2-desc { color: #e7e9eb }" )
+            else:
+                img = ui.tags.img(src = "achievement2_false.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement2-header, #achievement2-desc { color: #585858 }" )
+            header = ui.tags.h2("Good Time", id="achievement2-header"),
+            desc = ui.tags.p("liked majority of logged films", id="achievement2-desc")
+            info_container = ui.tags.div(header, desc, class_="info-container")
+            container = ui.tags.div(img, info_container, styles, class_="achievement-container")
+            return container
+
+    @render.ui
+    def achievement3():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            ac1 = new_stats['achievements'][2]
+            if (ac1):
+                img = ui.tags.img(src = "achievement3_true.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement3-header, #achievement3-desc { color: #e7e9eb }" )
+            else:
+                img = ui.tags.img(src = "achievement3_false.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement3-header, #achievement3-desc { color: #585858 }" )
+            header = ui.tags.h2("Certified Copy", id="achievement3-header"),
+            desc = ui.tags.p("rewatched a film at least 5 times", id="achievement3-desc")
+            info_container = ui.tags.div(header, desc, class_="info-container")
+            container = ui.tags.div(img, info_container, styles, class_="achievement-container")
+            return container
+
+    @render.ui
+    def achievement4():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            ac1 = new_stats['achievements'][3]
+            if (ac1):
+                img = ui.tags.img(src = "achievement4_true.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement4-header, #achievement4-desc { color: #e7e9eb }" )
+            else:
+                img = ui.tags.img(src = "achievement4_false.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement4-header, #achievement4-desc { color: #585858 }" )
+            header = ui.tags.h2("The Social Network", id="achievement4-header"),
+            desc = ui.tags.p("reviewed at least 50% of logged films", id="achievement4-desc")
+            info_container = ui.tags.div(header, desc, class_="info-container")
+            container = ui.tags.div(img, info_container, styles, class_="achievement-container")
+            return container
+        
+    @render.ui
+    def achievement5():
+        new_stats = user_stats.get()
+        if new_stats is None:
+            return None
+        else:
+            ac1 = new_stats['achievements'][4]
+            if (ac1):
+                img = ui.tags.img(src = "achievement5_true.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement5-header, #achievement5-desc { color:  #e7e9eb }" )
+            else:
+                img = ui.tags.img(src = "achievement5_false.png", width= 100, height=110, class_="achievement-img")
+                styles = ui.tags.style( " #achievement5-header, #achievement5-desc { color: #585858 }" )
+            header = ui.tags.h2("After Hours", id="achievement5-header"),
+            desc = ui.tags.p("logged at least 5 films in one day", id="achievement5-desc")
+            info_container = ui.tags.div(header, desc, class_="info-container")
+            container = ui.tags.div(img, info_container, styles, class_="achievement-container")
+            return container
 
 app = App(app_ui, server, static_assets=www_dir, debug=False)
