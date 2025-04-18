@@ -5,4 +5,5 @@ plotly.express
 shinywidgets
 bs4
 requests
+lxml
 datetime
