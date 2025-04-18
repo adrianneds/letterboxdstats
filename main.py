@@ -200,19 +200,32 @@ def summary(df):
 
     # most , least watches
     sorted_date_df = date_df.sort_values('date', ascending=False).reset_index()
-    max = sorted_date_df.loc[sorted_date_df['count'].idxmax()]
-    min = sorted_date_df.loc[sorted_date_df['count'].idxmin(skipna=True)]
+    sorted_count_df = sorted_date_df.sort_values('count', ascending=False).reset_index()
 
-    most = str(max['date'])
-    least = str(min['date'])
+    max = sorted_count_df.loc[0,'count']
+    max2 = sorted_count_df.loc[1,'count']
 
-    datetime_most = datetime.strptime(most, '%Y-%m-%d').strftime('%b %d %Y')
-    datetime_least = datetime.strptime(least, '%Y-%m-%d').strftime('%b %d %Y')
+    max_date = sorted_count_df.loc[0,'date']
+    max2_date = sorted_count_df.loc[1,'date']
 
-    most_count = max['count']
-    least_count = min['count']
+    datetime_max = datetime.strptime(max_date, '%Y-%m-%d').strftime('%b %d %Y')
+    datetime_max2 = datetime.strptime(max2_date, '%Y-%m-%d').strftime('%b %d %Y')
 
-    watch_freq_lis = [datetime_most, datetime_least, str(most_count), str(least_count)]
+    watch_freq_lis = [datetime_max, datetime_max2, str(max), str(max2)]
+
+    # max = sorted_date_df.loc[sorted_date_df['count'].idxmax()]
+    # min = sorted_date_df.loc[sorted_date_df['count'].idxmin(skipna=True)]
+
+    # most = str(max['date'])
+    # least = str(min['date'])
+
+    # datetime_most = datetime.strptime(most, '%Y-%m-%d').strftime('%b %d %Y')
+    # datetime_least = datetime.strptime(least, '%Y-%m-%d').strftime('%b %d %Y')
+
+    # most_count = max['count']
+    # least_count = min['count']
+
+    # watch_freq_lis = [datetime_most, datetime_least, str(most_count), str(least_count)]
 
     # reviewed counts
     review_df = pd.DataFrame(df_unique.groupby(['reviewed']).size())
@@ -228,8 +241,8 @@ def summary(df):
     rewatched = str(query.at[0,'film_name'])
     rewatchedYear = query.at[0,'release_date']
     rewatchUrl = query.at[0,'url']
-    if (len(rewatched)> 30):
-        rewatched = rewatched[:25] + "..."
+    if (len(rewatched)> 40):
+        rewatched = rewatched[:38] + "..."
     rewatchTimes = len(query)
     if(rewatchTimes <= 1):
         rewatchedLis = [ "No rewatches logged!", "N/A", "0x rewatched", "placeholder.png" ]
@@ -301,7 +314,7 @@ def summary(df):
     print(reviewPrcnt)
     if (reviewPrcnt >= 0.5):
         achievementLis[3] = True 
-    if (most_count >= 5):
+    if (max >= 5):
         achievementLis[4] = True
 
     # output
@@ -345,9 +358,13 @@ def getFilmDetails(df):
     return d_df
 
 def getGenres(soup):
-    genres = soup.find('div', id='tab-genres').find('div', class_='text-sluglist capitalize').find_all('a')[:5]
-    genresList = [ g.text  for g in genres ]
-    return(genresList)
+    genres_find = soup.find('div', id='tab-genres')
+    if (genres_find is not None):
+        genres = genres_find.find('div', class_='text-sluglist capitalize').find_all('a')[:5]
+        genresList = [ g.text  for g in genres ]
+        return(genresList)
+    else:
+        return [""]
 
 def getDirector(soup):
     directors_find = soup.find('div', id='tab-crew')

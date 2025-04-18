@@ -47,14 +47,17 @@ body {
 
 #submit {
     font-family: AkzidenzLight;
+    font-size:15px;
     font-weight: bold;
     margin-top: 8px;
     background-color: #fc7f01;
     color:  #e7e9eb;
     border: 0px;
+    transition: 0.3s;
 }
 
 #submit:hover {
+    cursor: pointer;
     background-color: #f3b06c;
     color: white;
     transition: 0.3s;
@@ -122,6 +125,13 @@ body {
     color: #fc7f01;
     margin-top: 0px;
     margin-bottom:0px;
+    transition: 0.3s;
+}
+
+#result:hover {
+    transition: 0.5s;
+    font-size: 150px;
+    color: #fdc830;
 }
 
 .watches-header {
@@ -163,6 +173,12 @@ body {
     height: 40px;
     width: 40px;
     background-color: #05de54;
+    transition: 0.3s;
+}
+
+.green-box:hover {
+    transition: 0.3s;
+    background-color: #40baf1;
 }
 
 .watches-count-container {
@@ -231,6 +247,21 @@ body {
     margin-top: 1px;
     margin-bottom: 1px;
     line-height: 56px;
+    transition: 0.3s;
+}
+
+#popularReview1:hover, #popularReview2:hover {
+    transition: 0.3s;
+    color:#2c91bf;
+    animation: moveAround 2s infinite ease-in-out;
+}
+
+@keyframes moveAround {
+    0% { transform: translate(0, 0) scale(1.05); }
+    25% { transform: translate(5px, -5px) scale(1.05); }
+    50% { transform: translate(0, 0) scale(1.05); }
+    75% { transform: translate(-5px, 5px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1.05); }
 }
 
 .review-details {
@@ -326,10 +357,19 @@ body {
 
 #minRating, #maxRating {
     color:#fc7f01;
+    transition: 0.3s;
 }
 
 #aveRating {
     color:#40baf1;
+    transition: 0.3s;
+}
+
+#minRating:hover, #maxRating:hover, #aveRating:hover {
+    transition: 0.3s;
+    color:#05de54;
+    transform: scale(1.05);
+    letter-spacing: 4px;
 }
 
 #minRating, #maxRating, #aveRating {
@@ -408,6 +448,14 @@ body {
     width: 450px;
     letter-spacing: -1px;
     line-height: 80%;
+    transition: 0.3s;
+}
+
+#rewatchFilm:hover {
+    transition: 0.3s;
+    color:#2c91bf;
+    font-size: 70px;
+    letter-spacing: 3px;
 }
 
 #rewatch-icon {
@@ -503,6 +551,7 @@ body {
     font-size: 30px;
     font-weight: bold;
     margin-bottom: 0;
+    transition: 0.3s;
 }
 
 #achievement1-desc, #achievement2-desc, #achievement3-desc,
@@ -512,10 +561,23 @@ body {
     font-size: 20px;
 }
 
+#achievement1-header:hover, #achievement2-header:hover, #achievement3-header:hover,
+#achievement4-header:hover, #achievement5-header:hover {
+    transition: 0.3s;
+    color:#fdc830;
+    letter-spacing: 3.5px;
+}
+
 #credits {
     font-family: CooperItalic;
     color: #e7e9eb;
     font-size: 15px;
+    transition: 0.3s;
+}
+
+#credits:hover {
+    transition: 0.3s;
+    letter-spacing: 10px;
 }
 
 .section{

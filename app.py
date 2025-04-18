@@ -9,9 +9,6 @@ import matplotlib as plt
 import circlify as circlify
 import requests as requests
 
-# Import data from shared.py
-from shared import app_dir, df
-
 from shiny import App, reactive, render, ui
 
 www_dir = Path(__file__).parent / "www"
@@ -48,7 +45,7 @@ app_ui = ui.div(
         ),
         ui.div(
             # most watches 
-            ui.p("Most Watches*", class_="watches-header"),
+            ui.p("(1) Most Watches*", class_="watches-header"),
             ui.div(
                 ui.div(
                     ui.div(
@@ -62,8 +59,8 @@ app_ui = ui.div(
                 class_="watches-container"
                 ),
 
-            # least watches
-            ui.p("Least Watches*", class_="watches-header"),
+            # 2nd most watches
+            ui.p("(2) Most Watches*", class_="watches-header"),
             ui.div(
                 ui.div(
                     ui.div(
@@ -77,7 +74,7 @@ app_ui = ui.div(
                 class_="watches-container"
                 ),
 
-            ui.p("most recent watches > 0", class_="desc"),
+            ui.p("*most recent watches", class_="desc"),
             ui.img(src="film.png", id="film-img"),
             class_="data-subcontainer2"
         ),
@@ -243,7 +240,7 @@ app_ui = ui.div(
     "@font-face { font-family: CooperItalic; src: url(CooperLtBT-Italic.woff) }"),
 
     ui.tags.style(".data-container, .rating-section, .profile-section { background-image: url(purp-bg.png); }"),
-    ui.include_css(app_dir / "style.css"),
+    ui.include_css(Path(__file__).parent / "style.css"),
     class_ = "main-container"
 )
 
