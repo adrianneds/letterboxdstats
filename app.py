@@ -15,6 +15,7 @@ from shared import app_dir, df
 from shiny import App, reactive, render, ui
 
 www_dir = Path(__file__).parent / "www"
+js_file = Path(__file__).parent / "www" / "script.js"
 
 app_ui = ui.div(
 
@@ -22,10 +23,11 @@ app_ui = ui.div(
     ui.div(
         ui.p("Enter your Letterboxd username", class_="input-header"),
         ui.input_text(id="inputuser", label="",value="@useruser"),
-        ui.input_action_button("submit", "submit"),
+        ui.input_action_button("submit", "submit", onClick = "observeDiv()"),
         class_ = "container"
     ),
 
+    ui.div(
     # films logged, watch freq
     ui.div(
         ui.div(
@@ -108,7 +110,7 @@ app_ui = ui.div(
         ui.div(
             # outputs pie chart for reviewed/not
             ui.div(
-                ui.h1("Films Reviewed", id="films-reviewed-header-text"),
+                ui.h1("Films Reviewed ✎", id="films-reviewed-header-text"),
                 ui.img(src="speech-bubble.png", id="speech-bubble-icon"),
                 class_="films-reviewed-header"
             ),
@@ -128,12 +130,12 @@ app_ui = ui.div(
             ),
             ui.div(
                 ui.div(
-                    ui.h1("Most Watched Directors", class_="rating-section-header most"),
+                    ui.h1("Most Watched Directors ►", class_="rating-section-header most"),
                     output_widget("mostDirectors"),
                     class_="most-directors"
                 ),
                 ui.div(
-                    ui.h1("Most Watched Actors", class_="rating-section-header most"),
+                    ui.h1("Most Watched Actors ►", class_="rating-section-header most"),
                     output_widget("mostActors"),
                     class_="most-actors"
                 ),
@@ -164,13 +166,13 @@ app_ui = ui.div(
     # genres and most rewatched
     ui.div(
         ui.div(
-            ui.h1("Most Watched Genres", class_="genre-rew-header"),
+            ui.h1("Most Watched Genres ➷", class_="genre-rew-header"),
             output_widget("genreBar"),
             class_="genre-bar"
         ),
         ui.div(
             ui.div(
-                ui.h1("Most Rewatched Film", class_="genre-rew-header"),
+                ui.h1("Most Rewatched Film ↺", class_="genre-rew-header"),
                 ui.output_text_verbatim("rewatchFilm"),
                 ui.output_text_verbatim("rewatchYear"),
                 ui.img(src = "rewatch.png", id="rewatch-icon"),
@@ -214,8 +216,26 @@ app_ui = ui.div(
         ui.h1("github: @adrianneds", id="credits"),
         class_="profile-section"
     ),
+    id="content-div",
+    ),
 
     # other properties for main container
+    ui.include_js(js_file),
+    # ui.tags.script("""
+    #     const observer = new MutationObserver(() => {
+    #         document.getElementById("content-div").style.display = "block";
+    #         document.getElementById("content-div").style.visibility = "visible";
+    #         console.log("detect")
+    #     });
+
+    #     var config = { attributes: true, childList: true, subtree: true };
+
+    #     function observeDiv() {
+    #         console.log("aa")
+    #         observer.observe(document.querySelector("#content-div"), config);
+    #     }
+    #                """),
+    ui.tags.style("#content-div { display: none; visibility: hidden; } "),
     ui.tags.style("@font-face { font-family: Akzidenz; src: url(Akzidenz-grotesk-bold.woff); } "
     "@font-face { font-family: AkzidenzLight; src: url(Akzidenz-grotesk-ce-light.woff); }" 
     "@font-face { font-family: CooperItalic; src: url(CooperLtBT-Italic.woff) }"),
@@ -321,8 +341,8 @@ def server(input, output, session):
             return None
         else:
             r = "\"" + str(new_reviews['mostPop'][1]) + "\""
-            if (len(r) >= 55):
-                return r[:52] + "..." + "\""
+            if (len(r) >= 60):
+                return r[:58] + "..." + "\""
             else:
                 return r
         
@@ -333,8 +353,8 @@ def server(input, output, session):
             return None
         else:
             r = "\"" + str(new_reviews['mostPop2'][1]) + "\""
-            if (len(r) >= 55):
-                return r[:52] + "..." + "\""
+            if (len(r) >= 60):
+                return r[:58] + "..." + "\""
             else:
                 return r
         
@@ -413,7 +433,7 @@ def server(input, output, session):
             return None
         else:
             df = new_stats['ratingVsAvgRating']
-            fig = px.strip(df, x='film_rating', y='averageRating', color="film_rating", hover_data=['film_name'], width=900,height=400,
+            fig = px.strip(df, x='Your Rating', y='Average Rating', color="Your Rating", hover_data=['Film Name'], width=900,height=400,
                              color_discrete_map={ 0:"#d9eee1", 0.5: "#d9eee1", 1: "#bee8cd", 1.5: "#bee8cd",
                                                  2: "#a6e7bd", 2.5: "#a6e7bd", 3: "#7ce5a2", 3.5: "#7ce5a2",
                                                   4: "#48e380", 4.5:"#48e380", 5:'#05de54'})

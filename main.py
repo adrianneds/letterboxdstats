@@ -145,8 +145,8 @@ def summary(df):
 
     # film details
     fdetails = getFilmDetails(df_unique)
-    ratingVsAvgRating = pd.DataFrame({'averageRating':fdetails['averageRating'], 'film_rating':df_unique['film_rating'], 'film_name':df_unique['film_name']})
-    ratingVsAvgRating = ratingVsAvgRating[pd.to_numeric(ratingVsAvgRating['film_rating'], errors='coerce').notnull()]
+    ratingVsAvgRating = pd.DataFrame({'Average Rating':fdetails['averageRating'], 'Your Rating':df_unique['film_rating'], 'Film Name':df_unique['film_name']})
+    ratingVsAvgRating = ratingVsAvgRating[pd.to_numeric(ratingVsAvgRating['Your Rating'], errors='coerce').notnull()]
     print(ratingVsAvgRating)
 
     # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
@@ -373,7 +373,7 @@ def getFilmPoster(url):
     posterUrl = posterUrl.split("?")[0]
     return posterUrl
     
-print(main("sberrymilky"))
+# print(main("sberrymilky"))
 # print(main("essi_17"))
 # print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
