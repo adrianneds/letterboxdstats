@@ -23,7 +23,7 @@ app_ui = ui.div(
     ui.div(
         ui.p("Enter your Letterboxd username", class_="input-header"),
         ui.input_text(id="inputuser", label="",value="@useruser"),
-        ui.input_action_button("submit", "submit", onClick = "observeDiv()"),
+        ui.input_action_button("submit", "submit"),
         ui.output_text_verbatim("errorMsg"),
         class_ = "container"
     ),
@@ -264,6 +264,7 @@ def server(input, output, session):
             user_stats.set(new_stats)
             new_review = getMostPopularReview(username)
             user_reviews.set(new_review)
+            ui.insert_ui(ui.tags.script("observeDiv()"), selector="script")
             return
         
     @render.text
