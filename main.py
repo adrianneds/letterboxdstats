@@ -231,7 +231,10 @@ def summary(df):
     if (len(rewatched)> 30):
         rewatched = rewatched[:25] + "..."
     rewatchTimes = len(query)
-    rewatchedLis = [ rewatched, str(rewatchedYear), str(rewatchTimes), str(getFilmPoster(str(rewatchUrl))) ]
+    if(rewatchTimes <= 1):
+        rewatchedLis = [ "No rewatches logged!", "N/A", "0x rewatched", "placeholder.png" ]
+    else:
+        rewatchedLis = [ rewatched, str(rewatchedYear), str(rewatchTimes) +  "x watched", str(getFilmPoster(str(rewatchUrl))) ]
 
     # filmd_df = getFilmDetails(df_unique)
 
@@ -383,7 +386,7 @@ def getFilmPoster(url):
     return posterUrl
     
 # print(main("sberrymilky"))
-print(main("sdjhdffh"))
+# print(main("sdjhdffh"))
 # print(getFilmPoster("https://letterboxd.com/film/the-social-network/"))
 #print(getMostPopularReview('sberrymilky'))
 #print(getMostPopularReview('essi_17'))
