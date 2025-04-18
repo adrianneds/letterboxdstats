@@ -1,13 +1,7 @@
-import seaborn as sns
-from faicons import icon_svg
 from pathlib import Path
 import plotly.express as px
-import pandas as pd
 from main import *
 from shinywidgets import output_widget, render_widget  
-import matplotlib as plt
-import circlify as circlify
-import requests as requests
 
 from shiny import App, reactive, render, ui
 

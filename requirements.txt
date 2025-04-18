@@ -1,2 +1,10 @@
 shiny
 pandas
+pathlib
+plotly.express
+shinywidgets
+bs4
+requests
+datetime
+concurrent.futures
+datetime

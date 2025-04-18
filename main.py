@@ -1,16 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
-import html5lib
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
-from dash import Dash, dcc, html, Input, Output
-from datetime import datetime
-from selenium import webdriver
-from lxml import etree
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-import numpy as np
 
 # create soup
 def init_soup(url):
